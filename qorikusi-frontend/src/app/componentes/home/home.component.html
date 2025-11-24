@@ -1,0 +1,162 @@
+<div class="home-page">
+  
+  <!-- Banner de Envío Gratis -->
+  <div class="top-banner">
+    <p class="mb-0">Envío gratis a todo el Perú por compras mayores a S/. 250</p>
+  </div>
+
+  <!-- Hero Section -->
+  <section class="hero-section">
+    <div class="container-fluid p-0">
+      <div class="row g-0">
+        <div class="col-md-6">
+          <div class="hero-image">
+            <img src="assets/images/hero-model.jpg" alt="Modelo con joyas Qorikusi" class="img-fluid">
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="hero-content">
+            <div class="hero-product-image">
+              <img src="assets/images/hero-product.jpg" alt="Collar Qorikusi" class="img-fluid">
+            </div>
+            <button class="btn btn-hero">COMPRAR AHORA</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Beneficios -->
+  <section class="benefits-section section-padding">
+    <div class="container">
+      <div class="row text-center">
+        <div class="col-md-4 mb-4">
+          <div class="benefit-item">
+            <i class="fas fa-shipping-fast benefit-icon"></i>
+            <h5>Envíos rápidos y seguros</h5>
+            <p>Contamos con delivery propio</p>
+          </div>
+        </div>
+        <div class="col-md-4 mb-4">
+          <div class="benefit-item">
+            <i class="fas fa-shield-alt benefit-icon"></i>
+            <h5>Compra fácil y 100% segura</h5>
+            <p>Experiencia de compra transparente</p>
+          </div>
+        </div>
+        <div class="col-md-4 mb-4">
+          <div class="benefit-item">
+            <i class="fas fa-award benefit-icon"></i>
+            <h5>Garantía por defectos de fábrica</h5>
+            <p>Productos de calidad siempre</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Categorías Rápidas -->
+  <section class="categories-quick">
+    <div class="container">
+      <div class="row g-3">
+        <div class="col-md-6">
+          <div class="category-card">
+            <img src="assets/images/category-collares.jpg" alt="Collares" class="img-fluid">
+            <button class="btn btn-category">COLLARES</button>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="category-card">
+            <img src="assets/images/category-anillos.jpg" alt="Anillos" class="img-fluid">
+            <button class="btn btn-category">ANILLOS</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Lo Más Pedido -->
+  <section class="featured-products section-padding">
+    <div class="container">
+      <h2 class="section-title">LO MÁS PEDIDO</h2>
+      <div class="row">
+        <div class="col-lg-3 col-md-6 mb-4" *ngFor="let product of featuredProducts">
+          <div class="product-card">
+            <div class="product-image">
+              <img [src]="product.image" [alt]="product.name" class="img-fluid">
+            </div>
+            <div class="product-info">
+              <h5 class="product-name">{{ product.name }}</h5>
+              <p class="product-price">s/. {{ product.price | number:'1.2-2' }}</p>
+              <button class="btn btn-add-cart">AÑADIR AL CARRITO</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Dots de navegación -->
+      <div class="carousel-dots text-center mt-4">
+        <span class="dot active"></span>
+        <span class="dot"></span>
+        <span class="dot"></span>
+        <span class="dot"></span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Banner Promocional -->
+  <section class="promo-banner">
+    <div class="container">
+      <div class="row align-items-center">
+        <div class="col-md-8">
+          <div class="promo-content">
+            <h3 class="promo-title">NEW TO SALE</h3>
+            <h2 class="promo-discount">Hasta <span class="highlight">70%</span> Off</h2>
+          </div>
+        </div>
+        <div class="col-md-4 text-end">
+          <button class="btn btn-promo">VER MÁS</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Últimas Colecciones -->
+  <section class="collections-section section-padding">
+    <div class="container">
+      <h2 class="section-title">ÚLTIMAS COLECCIONES</h2>
+      <div class="row">
+        <div class="col-md-4 mb-4" *ngFor="let collection of collections">
+          <div class="collection-card">
+            <img [src]="collection.image" [alt]="collection.name" class="img-fluid">
+            <div class="collection-overlay">
+              <button class="btn btn-collection">{{ collection.name }}</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Testimonios -->
+  <section class="testimonials-section section-padding">
+    <div class="container">
+      <h2 class="section-title">TESTIMONIOS</h2>
+      <div class="row justify-content-center">
+        <div class="col-md-5 mb-4" *ngFor="let testimonial of testimonials">
+          <div class="testimonial-card">
+            <div class="testimonial-avatar">
+              <img [src]="testimonial.avatar" [alt]="testimonial.name" class="img-fluid rounded-circle">
+            </div>
+            <p class="testimonial-text">"{{ testimonial.text }}"</p>
+            <h6 class="testimonial-name">{{ testimonial.name }}</h6>
+            <div class="testimonial-stars">
+              <i class="fas fa-star" *ngFor="let star of [1,2,3,4,5]"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</div>

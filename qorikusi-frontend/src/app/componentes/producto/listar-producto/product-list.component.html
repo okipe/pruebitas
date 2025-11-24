@@ -1,0 +1,179 @@
+<div class="product-list-page">
+  
+  <!-- Banner de Envío -->
+  <div class="top-banner">
+    <p class="mb-0">Envío gratis a todo el Perú por compras mayores a S/. 250</p>
+  </div>
+
+  <div class="container-fluid py-4">
+    <div class="row">
+      
+      <!-- Sidebar de Filtros -->
+      <aside class="col-lg-3 col-md-4 mb-4">
+        <div class="filters-section">
+          
+          <!-- Filtro por Material -->
+          <div class="filter-group">
+            <h5 class="filter-title">Material</h5>
+            <div class="filter-options">
+              <div class="form-check" *ngFor="let material of materials">
+                <input 
+                  class="form-check-input" 
+                  type="checkbox" 
+                  [id]="'material-' + material.id"
+                  [checked]="material.checked"
+                  (change)="onFilterChange()"
+                >
+                <label class="form-check-label" [for]="'material-' + material.id">
+                  {{ material.name }} <span class="count">({{ material.count }})</span>
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <!-- Filtro por Detalles -->
+          <div class="filter-group">
+            <h5 class="filter-title">Detalles</h5>
+            <div class="filter-options">
+              <div class="form-check" *ngFor="let detail of details">
+                <input 
+                  class="form-check-input" 
+                  type="checkbox" 
+                  [id]="'detail-' + detail.id"
+                  (change)="onFilterChange()"
+                >
+                <label class="form-check-label" [for]="'detail-' + detail.id">
+                  {{ detail.name }}
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <!-- Filtro por Precio -->
+          <div class="filter-group">
+            <h5 class="filter-title">Precio</h5>
+            <div class="price-range">
+              <div class="row g-2">
+                <div class="col-6">
+                  <input 
+                    type="number" 
+                    class="form-control form-control-sm" 
+                    placeholder="S/. 0"
+                    [(ngModel)]="priceMin"
+                  >
+                </div>
+                <div class="col-6">
+                  <input 
+                    type="number" 
+                    class="form-control form-control-sm" 
+                    placeholder="S/. 2900"
+                    [(ngModel)]="priceMax"
+                  >
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </aside>
+
+      <!-- Productos Grid -->
+      <main class="col-lg-9 col-md-8">
+        
+        <!-- Header del Catálogo -->
+        <div class="catalog-header mb-4">
+          <div class="row align-items-center">
+            <div class="col-md-6">
+              <h1 class="catalog-title">COLLARES</h1>
+            </div>
+            <div class="col-md-6 text-end">
+              <div class="catalog-controls">
+                <!-- Vista Grid/List -->
+                <div class="view-toggle me-3">
+                  <button 
+                    class="btn-view" 
+                    [class.active]="viewMode === 'grid'"
+                    (click)="viewMode = 'grid'"
+                  >
+                    <i class="fas fa-th"></i>
+                  </button>
+                  <button 
+                    class="btn-view" 
+                    [class.active]="viewMode === 'list'"
+                    (click)="viewMode = 'list'"
+                  >
+                    <i class="fas fa-list"></i>
+                  </button>
+                </div>
+
+                <!-- Ordenar -->
+                <select class="form-select form-select-sm" [(ngModel)]="sortBy" (change)="onSortChange()">
+                  <option value="">Tipo</option>
+                  <option value="price-asc">Precio: Menor a Mayor</option>
+                  <option value="price-desc">Precio: Mayor a Menor</option>
+                  <option value="name">Nombre A-Z</option>
+                  <option value="newest">Más Recientes</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Grid de Productos -->
+        <div class="products-grid" [class.list-view]="viewMode === 'list'">
+          <div 
+            class="product-card-wrapper" 
+            *ngFor="let product of filteredProducts"
+          >
+            <div class="product-card" [routerLink]="['/products', product.id]" style="cursor: pointer;">
+              <div class="product-image">
+                <img [src]="product.imagen" [alt]="product.nombre" class="img-fluid">
+                <div class="product-overlay">
+                  <button class="btn btn-quick-view" (click)="$event.stopPropagation()">Vista Rápida</button>
+                </div>
+              </div>
+              <div class="product-info">
+                <h5 class="product-name">{{ product.nombre }}</h5>
+                <p class="product-price">s/. {{ product.precio | number:'1.2-2' }}</p>
+              </div>
+            </div>
+          </div>
+          <!-- <div 
+            class="product-card-wrapper" 
+            *ngFor="let product of filteredProducts"
+          >
+            <div class="product-card">
+              <div class="product-image">
+                <img [src]="product.imagen" [alt]="product.nombre" class="img-fluid">
+                <div class="product-overlay">
+                  <button class="btn btn-quick-view">Vista Rápida</button>
+                </div>
+              </div>
+              <div class="product-info">
+                <h5 class="product-name">{{ product.nombre }}</h5>
+                <p class="product-price">s/. {{ product.precio | number:'1.2-2' }}</p>
+              </div>
+            </div>
+          </div> -->
+        </div>
+
+        <!-- Mensaje si no hay productos -->
+        <div *ngIf="filteredProducts.length === 0" class="no-products">
+          <i class="fas fa-search fa-3x mb-3"></i>
+          <p>No se encontraron productos con los filtros seleccionados.</p>
+        </div>
+
+      </main>
+
+    </div>
+  </div>
+
+  <!-- Banner Inferior -->
+  <section class="bottom-banner">
+    <div class="banner-content">
+      <h2 class="banner-logo">QORIKUSI</h2>
+      <p class="banner-tagline">"Joyas que despiertan tu luz interior"</p>
+    </div>
+  </section>
+
+</div>

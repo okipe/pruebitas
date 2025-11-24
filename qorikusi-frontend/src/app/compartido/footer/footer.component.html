@@ -1,0 +1,125 @@
+<footer class="footer-qorikusi">
+  
+  <!-- Sección Newsletter -->
+  <div class="newsletter-section">
+    <div class="container">
+      <div class="row justify-content-center">
+        <div class="col-lg-8 text-center">
+          <h3 class="newsletter-title">LO ÚLTIMO DE QORIKUSI</h3>
+          <p class="newsletter-subtitle">
+            Sea el primero en conocer los nuevos y apasionantes diseños, los eventos especiales,<br>
+            las inauguraciones de tiendas y mucho más.
+          </p>
+          
+          <form class="newsletter-form" (ngSubmit)="onSubscribe()">
+            <div class="input-group">
+              <input 
+                type="email" 
+                class="form-control newsletter-input" 
+                placeholder="Ingresa tu email"
+                [(ngModel)]="emailNewsletter"
+                name="email"
+                required
+              >
+              <button class="btn btn-subscribe" type="submit">
+                SUSCRIBIRME <i class="fas fa-arrow-right ms-2"></i>
+              </button>
+            </div>
+            <div class="form-check mt-3">
+              <input class="form-check-input" type="checkbox" id="acceptTerms" required>
+              <label class="form-check-label" for="acceptTerms">
+                He leído y acepto los <a href="#">Términos y Condiciones</a> y <a href="#">Política de Privacidad</a>
+              </label>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Sección Principal del Footer -->
+  <div class="footer-main">
+    <div class="container">
+      <div class="row">
+        
+        <!-- Logo y Descripción -->
+        <div class="col-lg-3 col-md-6 mb-4">
+          <div class="footer-logo-section">
+            <h2 class="footer-logo">QR</h2>
+            <p class="footer-description">
+              QORIKUSI es una marca de joyería espiritual artesanal que fusiona la 
+              sabiduría ancestral andina con la energía cósmica del sol, la luna y las 
+              piedras sagradas.
+            </p>
+          </div>
+        </div>
+
+        <!-- Servicio al Cliente -->
+        <div class="col-lg-3 col-md-6 mb-4">
+          <h4 class="footer-heading">SERVICIO AL CLIENTE</h4>
+          <ul class="footer-links">
+            <li><a href="#">Preguntas Frecuentes</a></li>
+            <li><a href="#">Políticas de Privacidad</a></li>
+            <li><a href="#">Políticas de Cookies</a></li>
+            <li><a href="#">Términos y Condiciones</a></li>
+            <li><a href="#">Libro de Reclamaciones</a></li>
+            <li><a href="#">Legales</a></li>
+          </ul>
+        </div>
+
+        <!-- Información -->
+        <div class="col-lg-3 col-md-6 mb-4">
+          <h4 class="footer-heading">INFORMACIÓN</h4>
+          <ul class="footer-links">
+            <li><a routerLink="/about">Nosotros</a></li>
+            <li><a href="#">Nuestras Tiendas</a></li>
+            <li><a href="#">Guía de Tallas</a></li>
+            <li><a href="#">Cuidado de Joyas</a></li>
+            <li><a href="#">Garantía de Joyas</a></li>
+          </ul>
+        </div>
+
+        <!-- Contáctanos -->
+        <div class="col-lg-3 col-md-6 mb-4">
+          <h4 class="footer-heading">CONTÁCTANOS</h4>
+          <ul class="footer-contact">
+            <li>
+              <i class="fas fa-phone me-2"></i>
+              <a href="tel:+5114576060">(01) 457 - 6060</a>
+            </li>
+            <li>
+              <i class="fas fa-map-marker-alt me-2"></i>
+              Av. José Larco - Miraflores
+            </li>
+            <li>
+              <i class="fas fa-envelope me-2"></i>
+              <a [href]="'mailto:info' + '@' + 'qorikusijoyeria.com'">Info&#64;qorikusijoyeria.com</a>
+            </li>
+          </ul>
+
+          <!-- Redes Sociales -->
+          <div class="social-icons mt-4">
+            <a href="#" aria-label="TikTok"><i class="fab fa-tiktok"></i></a>
+            <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+            <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+            <a href="#" aria-label="Pinterest"><i class="fab fa-pinterest-p"></i></a>
+            <a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- Copyright -->
+  <div class="footer-bottom">
+    <div class="container">
+      <div class="row">
+        <div class="col-12 text-center">
+          <p class="mb-0">QORIKUSI 2025 ©</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</footer>

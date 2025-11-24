@@ -1,0 +1,258 @@
+<header class="header-qorikusi">
+  <div class="container-fluid">
+    <div class="row align-items-center py-3">
+      <!-- Menú Hamburguesa (Siempre visible) -->
+      <div class="col-2 col-md-1">
+        <button class="btn-hamburger" (click)="toggleMenu()" aria-label="Menú">
+          <i class="fas fa-bars"></i>
+        </button>
+      </div>
+
+      <!-- Logo Centrado -->
+      <div class="col-8 col-md-10 text-center">
+        <a routerLink="/" class="logo-link">
+          <h1 class="logo-text mb-0">QORiKUSi</h1>
+        </a>
+      </div>
+
+      <!-- Iconos de Usuario y Carrito -->
+      <div class="col-2 col-md-1 text-end">
+        <div class="header-icons">
+          <!-- Buscador -->
+          <button class="icon-btn d-none d-md-inline-block" aria-label="Buscar">
+            <i class="fas fa-search"></i>
+          </button>
+
+          <!-- Carrito -->
+          <a routerLink="/cart" class="icon-btn position-relative">
+            <i class="fas fa-shopping-cart"></i>
+            <span class="cart-badge" *ngIf="cartItemsCount > 0">{{
+              cartItemsCount
+            }}</span>
+          </a>
+
+          <!-- Usuario - Autenticado -->
+          <div class="user-menu-wrapper" *ngIf="isAuthenticated">
+            <button
+              class="icon-btn user-avatar d-none d-md-inline-flex"
+              (click)="toggleUserMenu()"
+              [class.active]="userMenuOpen"
+            >
+              <span class="avatar-initials">{{ getUserInitials() }}</span>
+            </button>
+
+            <!-- Dropdown Menu - Usuario Autenticado -->
+            <div class="user-dropdown" [class.show]="userMenuOpen">
+              <div class="user-dropdown-header">
+                <div class="user-avatar-large">
+                  <span class="avatar-initials">{{ getUserInitials() }}</span>
+                </div>
+                <div class="user-info">
+                  <p class="user-email">{{ currentUser?.email }}</p>
+                  <span class="user-role" *ngIf="isAdmin()">
+                    <i class="fas fa-crown me-1"></i>Administrador
+                  </span>
+                </div>
+              </div>
+
+              <div class="user-dropdown-divider"></div>
+
+              <ul class="user-dropdown-menu">
+                <li>
+                  <a routerLink="/profile" (click)="closeUserMenu()">
+                    <i class="fas fa-user me-2"></i>
+                    Mi Perfil
+                  </a>
+                </li>
+                <li>
+                  <a routerLink="/profile/orders" (click)="closeUserMenu()">
+                    <i class="fas fa-shopping-bag me-2"></i>
+                    Mis Pedidos
+                  </a>
+                </li>
+                <li *ngIf="isAdmin()">
+                  <a routerLink="/admin" (click)="closeUserMenu()">
+                    <i class="fas fa-cog me-2"></i>
+                    Panel Admin
+                  </a>
+                </li>
+                <li class="divider"></li>
+                <li>
+                  <a (click)="logout()" class="logout-btn">
+                    <i class="fas fa-sign-out-alt me-2"></i>
+                    Cerrar Sesión
+                  </a>
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- Usuario - NO Autenticado (INVITADO) -->
+          <div class="user-menu-wrapper" *ngIf="!isAuthenticated">
+            <button
+              class="icon-btn d-none d-md-inline-block"
+              (click)="toggleGuestMenu()"
+              [class.active]="guestMenuOpen"
+              aria-label="Menú de usuario"
+            >
+              <i class="fas fa-user"></i>
+            </button>
+
+            <!-- Dropdown Menu - Invitado -->
+            <div class="guest-dropdown" [class.show]="guestMenuOpen">
+              <div class="guest-dropdown-header">
+                <div class="guest-icon">
+                  <i class="fas fa-user-circle"></i>
+                </div>
+                <div class="guest-info">
+                  <p class="guest-title">¡Bienvenido!</p>
+                  <p class="guest-subtitle">Accede a tu cuenta</p>
+                </div>
+              </div>
+
+              <div class="guest-dropdown-divider"></div>
+
+              <ul class="guest-dropdown-menu">
+                <li>
+                  <a
+                    routerLink="/auth/login"
+                    (click)="closeGuestMenu()"
+                    class="login-btn"
+                  >
+                    <i class="fas fa-sign-in-alt me-2"></i>
+                    Iniciar Sesión
+                  </a>
+                </li>
+                <li>
+                  <a
+                    routerLink="/auth/register"
+                    (click)="closeGuestMenu()"
+                    class="register-btn"
+                  >
+                    <i class="fas fa-user-plus me-2"></i>
+                    Crear Cuenta
+                  </a>
+                </li>
+              </ul>
+
+              <div class="guest-dropdown-footer">
+                <p class="guest-benefits-title">
+                  <i class="fas fa-star me-1"></i>
+                  Beneficios de tener cuenta
+                </p>
+                <ul class="guest-benefits">
+                  <li>
+                    <i class="fas fa-check me-2"></i>Seguimiento de pedidos
+                  </li>
+                  <li><i class="fas fa-check me-2"></i>Historial de compras</li>
+                  <li><i class="fas fa-check me-2"></i>Ofertas exclusivas</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Menú Lateral (Desplegable) -->
+  <div class="mobile-menu" [class.active]="menuOpen">
+    <div class="mobile-menu-header">
+      <h2 class="logo-text mb-0">QORiKUSi</h2>
+      <button class="btn-close-menu" (click)="toggleMenu()" aria-label="Cerrar">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+
+    <!-- Información de Usuario en Menú Móvil -->
+    <div class="mobile-user-info" *ngIf="isAuthenticated">
+      <div class="mobile-user-avatar">
+        <span class="avatar-initials">{{ getUserInitials() }}</span>
+      </div>
+      <p class="mobile-user-email">{{ currentUser?.email }}</p>
+    </div>
+
+    <!-- Mensaje de Bienvenida para Invitados en Móvil -->
+    <div class="mobile-guest-info" *ngIf="!isAuthenticated">
+      <div class="mobile-guest-icon">
+        <i class="fas fa-user-circle"></i>
+      </div>
+      <p class="mobile-guest-text">¡Bienvenido a Qorikusi!</p>
+    </div>
+
+    <ul class="mobile-nav-menu">
+      <li><a routerLink="/" (click)="toggleMenu()">INICIO</a></li>
+      <li><a routerLink="/products" (click)="toggleMenu()">PRODUCTOS</a></li>
+      <li>
+        <a routerLink="/collections" (click)="toggleMenu()">COLECCIONES</a>
+      </li>
+      <li><a routerLink="/about" (click)="toggleMenu()">NOSOTROS</a></li>
+      <li><a routerLink="/contact" (click)="toggleMenu()">CONTACTO</a></li>
+
+      <!-- Opciones de Usuario Autenticado en Móvil -->
+      <li class="divider" *ngIf="isAuthenticated"></li>
+      <li *ngIf="isAuthenticated">
+        <a routerLink="/profile" (click)="toggleMenu()">
+          <i class="fas fa-user me-2"></i>MI PERFIL
+        </a>
+      </li>
+      <li *ngIf="isAuthenticated">
+        <a routerLink="/profile/orders" (click)="toggleMenu()">
+          <i class="fas fa-shopping-bag me-2"></i>MIS PEDIDOS
+        </a>
+      </li>
+      <li *ngIf="isAdmin()">
+        <a routerLink="/admin" (click)="toggleMenu()">
+          <i class="fas fa-cog me-2"></i>PANEL ADMIN
+        </a>
+      </li>
+      <li *ngIf="isAuthenticated">
+        <a (click)="logout()" class="logout-link">
+          <i class="fas fa-sign-out-alt me-2"></i>CERRAR SESIÓN
+        </a>
+      </li>
+
+      <!-- Opciones para Invitados en Móvil -->
+      <li class="divider" *ngIf="!isAuthenticated"></li>
+      <li *ngIf="!isAuthenticated">
+        <a
+          routerLink="/auth/login"
+          (click)="toggleMenu()"
+          class="highlight-link"
+        >
+          <i class="fas fa-sign-in-alt me-2"></i>INICIAR SESIÓN
+        </a>
+      </li>
+      <li *ngIf="!isAuthenticated">
+        <a
+          routerLink="/auth/register"
+          (click)="toggleMenu()"
+          class="highlight-link"
+        >
+          <i class="fas fa-user-plus me-2"></i>CREAR CUENTA
+        </a>
+      </li>
+    </ul>
+  </div>
+
+  <!-- Overlay para cerrar menú -->
+  <div
+    class="menu-overlay"
+    [class.active]="menuOpen"
+    (click)="toggleMenu()"
+  ></div>
+
+  <!-- Overlay para cerrar menú de usuario autenticado -->
+  <div
+    class="user-menu-overlay"
+    [class.active]="userMenuOpen"
+    (click)="closeUserMenu()"
+  ></div>
+
+  <!-- Overlay para cerrar menú de invitado -->
+  <div
+    class="guest-menu-overlay"
+    [class.active]="guestMenuOpen"
+    (click)="closeGuestMenu()"
+  ></div>
+</header>

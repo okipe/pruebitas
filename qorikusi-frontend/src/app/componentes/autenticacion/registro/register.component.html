@@ -1,0 +1,208 @@
+<div class="auth-page">
+  <div class="auth-container">
+    <div class="auth-card">
+      <h2 class="auth-title">REGISTRARSE</h2>
+
+      <!-- Mensaje de Éxito -->
+      <div class="alert alert-success" *ngIf="successMessage" role="alert">
+        <i class="fas fa-check-circle me-2"></i>
+        {{ successMessage }}
+      </div>
+
+      <!-- Mensaje de Error -->
+      <div class="alert alert-danger" *ngIf="errorMessage" role="alert">
+        <i class="fas fa-exclamation-circle me-2"></i>
+        {{ errorMessage }}
+      </div>
+
+      <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+        <!-- CAMPO EMAIL -->
+        <div class="form-group mb-3">
+          <label for="email" class="form-label"
+            >Dirección de correo electrónico</label
+          >
+          <input
+            type="email"
+            class="form-control"
+            id="email"
+            formControlName="email"
+            placeholder="correo@ejemplo.com"
+            [class.is-invalid]="email?.invalid && email?.touched"
+          />
+          <div
+            class="invalid-feedback"
+            *ngIf="email?.errors?.['required'] && email?.touched"
+          >
+            Por favor ingresa tu correo electrónico
+          </div>
+          <div
+            class="invalid-feedback"
+            *ngIf="email?.errors?.['email'] && email?.touched"
+          >
+            Por favor ingresa un correo válido
+          </div>
+        </div>
+
+        <!-- CAMPO CONTRASEÑA -->
+        <div class="form-group mb-3">
+          <label for="password" class="form-label">Contraseña</label>
+          <div class="password-input-wrapper">
+            <input
+              [type]="showPassword ? 'text' : 'password'"
+              class="form-control"
+              id="password"
+              formControlName="password"
+              placeholder="••••••••"
+              [class.is-invalid]="password?.invalid && password?.touched"
+            />
+            <button
+              type="button"
+              class="btn-toggle-password"
+              (click)="togglePasswordVisibility()"
+              [attr.aria-label]="
+                showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'
+              "
+            >
+              <i
+                class="fas"
+                [class.fa-eye]="!showPassword"
+                [class.fa-eye-slash]="showPassword"
+              ></i>
+            </button>
+          </div>
+
+          <!-- MENSAJES DE ERROR ESPECÍFICOS -->
+
+          <!-- Error: Campo requerido -->
+          <div
+            class="invalid-feedback d-block"
+            *ngIf="password?.errors?.['required'] && password?.touched"
+          >
+            <i class="fas fa-times-circle me-1"></i>
+            Por favor ingresa una contraseña
+          </div>
+
+          <!-- Error: Longitud mínima -->
+          <div
+            class="invalid-feedback d-block"
+            *ngIf="password?.errors?.['minLength'] && !password?.errors?.['required'] && password?.touched"
+          >
+            <i class="fas fa-times-circle me-1"></i>
+            La contraseña debe tener al menos 8 caracteres
+          </div>
+
+          <!-- Error: Complejidad de contraseña -->
+          <div
+            class="invalid-feedback d-block"
+            *ngIf="password?.errors?.['weakPassword'] && !password?.errors?.['minLength'] && !password?.errors?.['required'] && password?.touched"
+          >
+            <i class="fas fa-times-circle me-1"></i>
+            La contraseña debe contener mayúsculas, minúsculas, números y
+            caracteres especiales
+          </div>
+
+          <!-- INDICADORES DE REQUISITOS DE CONTRASEÑA -->
+          <div class="password-requirements" *ngIf="password?.value">
+            <small class="requirement-title">Requisitos de contraseña:</small>
+            <ul class="requirements-list">
+              <li
+                [class.valid]="hasMinLength()"
+                [class.invalid]="!hasMinLength()"
+              >
+                <i class="fas fa-check-circle" *ngIf="hasMinLength()"></i>
+                <i class="fas fa-times-circle" *ngIf="!hasMinLength()"></i>
+                Al menos 8 caracteres
+              </li>
+              <li
+                [class.valid]="hasUpperCase()"
+                [class.invalid]="!hasUpperCase()"
+              >
+                <i class="fas fa-check-circle" *ngIf="hasUpperCase()"></i>
+                <i class="fas fa-times-circle" *ngIf="!hasUpperCase()"></i>
+                Una letra mayúscula
+              </li>
+              <li
+                [class.valid]="hasLowerCase()"
+                [class.invalid]="!hasLowerCase()"
+              >
+                <i class="fas fa-check-circle" *ngIf="hasLowerCase()"></i>
+                <i class="fas fa-times-circle" *ngIf="!hasLowerCase()"></i>
+                Una letra minúscula
+              </li>
+              <li [class.valid]="hasNumber()" [class.invalid]="!hasNumber()">
+                <i class="fas fa-check-circle" *ngIf="hasNumber()"></i>
+                <i class="fas fa-times-circle" *ngIf="!hasNumber()"></i>
+                Un número
+              </li>
+              <li
+                [class.valid]="hasSpecialChar()"
+                [class.invalid]="!hasSpecialChar()"
+              >
+                <i class="fas fa-check-circle" *ngIf="hasSpecialChar()"></i>
+                <i class="fas fa-times-circle" *ngIf="!hasSpecialChar()"></i>
+                Un carácter especial (!&#64;#$%^&*)
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- INFORMACIÓN DE PRIVACIDAD -->
+        <div class="privacy-info mb-3">
+          <p class="privacy-text">
+            Tus datos personales se utilizarán para procesar tu pedido, mejorar
+            tu experiencia en esta web y otros propósitos descritos en nuestra
+            <a href="#" class="privacy-link">política de privacidad</a>.
+          </p>
+        </div>
+
+        <!-- CHECKBOX TÉRMINOS Y CONDICIONES -->
+        <div class="form-check mb-4">
+          <input
+            class="form-check-input"
+            type="checkbox"
+            id="acceptTerms"
+            formControlName="acceptTerms"
+            [class.is-invalid]="acceptTerms?.invalid && acceptTerms?.touched"
+          />
+          <label class="form-check-label" for="acceptTerms">
+            He leído y acepto los
+            <a href="#" class="terms-link">Términos y Condiciones</a> y
+            <a href="#" class="terms-link">Política de Privacidad</a>
+          </label>
+          <div
+            class="invalid-feedback d-block"
+            *ngIf="acceptTerms?.invalid && acceptTerms?.touched"
+          >
+            Debes aceptar los términos y condiciones
+          </div>
+        </div>
+
+        <!-- BOTÓN REGISTRARSE -->
+        <button
+          type="submit"
+          class="btn btn-auth-primary w-100 mb-3"
+          [disabled]="registerForm.invalid || loading"
+        >
+          <span *ngIf="!loading">REGISTRARSE</span>
+          <span *ngIf="loading">
+            <i class="fas fa-spinner fa-spin me-2"></i>
+            Registrando...
+          </span>
+        </button>
+
+        <div class="auth-divider">
+          <span>O</span>
+        </div>
+
+        <div class="text-center">
+          <p class="mb-0">
+            ¿Ya tienes una cuenta?
+            <a routerLink="/auth/login" class="link-login"
+              >Inicia sesión aquí</a
+            >
+          </p>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

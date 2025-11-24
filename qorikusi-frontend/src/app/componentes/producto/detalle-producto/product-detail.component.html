@@ -1,0 +1,158 @@
+<div class="product-detail-page">
+  <!-- Banner de Envío -->
+  <div class="top-banner">
+    <p class="mb-0">
+      Envío gratis a todo el Perú por compras mayores a S/. 250
+    </p>
+  </div>
+
+  <!-- Contenedor Principal -->
+  <div class="container py-5">
+    <div class="row">
+      <!-- Galería de Imágenes -->
+      <div class="col-lg-6 mb-4">
+        <div class="product-gallery">
+          <!-- Thumbnails -->
+          <div class="thumbnails">
+            <div
+              class="thumbnail-item"
+              *ngFor="let image of product.imagenes; let i = index"
+              [class.active]="selectedImageIndex === i"
+              (click)="selectImage(i)"
+            >
+              <img [src]="image" [alt]="product.nombre" class="img-fluid" />
+            </div>
+          </div>
+
+          <!-- Imagen Principal -->
+          <div class="main-image">
+            <img
+              [src]="product.imagenes?.[selectedImageIndex] || product.imagen"
+              [alt]="product.nombre"
+              class="img-fluid"
+            />
+          </div>
+        </div>
+      </div>
+
+      <!-- Información del Producto -->
+      <div class="col-lg-6">
+        <div class="product-info-section">
+          <!-- Nombre y Precio -->
+          <h1 class="product-title">{{ product.nombre }}</h1>
+          <p class="product-price">
+            s/. {{ product.precio | number : "1.2-2" }}
+          </p>
+
+          <!-- Tabs: Descripción y Tiempo de Entrega -->
+          <div class="product-tabs">
+            <ul class="nav nav-tabs" role="tablist">
+              <li class="nav-item" role="presentation">
+                <button
+                  class="nav-link active"
+                  data-bs-toggle="tab"
+                  data-bs-target="#description"
+                  type="button"
+                  role="tab"
+                >
+                  Descripción
+                </button>
+              </li>
+              <li class="nav-item" role="presentation">
+                <button
+                  class="nav-link"
+                  data-bs-toggle="tab"
+                  data-bs-target="#delivery"
+                  type="button"
+                  role="tab"
+                >
+                  Tiempo de entrega
+                </button>
+              </li>
+            </ul>
+
+            <div class="tab-content">
+              <!-- Tab Descripción -->
+              <div
+                class="tab-pane fade show active"
+                id="description"
+                role="tabpanel"
+              >
+                <p class="product-description">{{ product.descripcion }}</p>
+                <p class="product-specs" *ngIf="product.especificaciones">
+                  {{ product.especificaciones }}
+                </p>
+              </div>
+
+              <!-- Tab Tiempo de Entrega -->
+              <div class="tab-pane fade" id="delivery" role="tabpanel">
+                <p class="delivery-info">
+                  <i class="fas fa-shipping-fast me-2"></i>
+                  Entrega en 2-3 días hábiles en Lima Metropolitana
+                </p>
+                <p class="delivery-info">
+                  <i class="fas fa-box me-2"></i>
+                  Entrega en 5-7 días hábiles en provincias
+                </p>
+                <p class="delivery-info">
+                  <i class="fas fa-truck me-2"></i>
+                  Envío gratis por compras mayores a S/. 250
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Botones de Acción -->
+          <div class="product-actions">
+            <button class="btn btn-add-cart" (click)="addToCart()">
+              AÑADIR AL CARRITO
+            </button>
+            <button class="btn btn-buy-now" (click)="buyNow()">
+              COMPRAR AHORA
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Te Recomendamos -->
+  <section class="recommended-section section-padding">
+    <div class="container">
+      <h2 class="section-title">Te recomendamos</h2>
+      <div class="row">
+        <div
+          class="col-lg-3 col-md-6 mb-4"
+          *ngFor="let recommended of recommendedProducts"
+        >
+          <div
+            class="recommended-card"
+            [routerLink]="['/products', recommended.id]"
+          >
+            <div class="recommended-image">
+              <img
+                [src]="recommended.imagen"
+                [alt]="recommended.nombre"
+                class="img-fluid"
+              />
+            </div>
+            <div class="recommended-info">
+              <h5 class="recommended-name">{{ recommended.nombre }}</h5>
+              <p class="recommended-price">
+                s/. {{ recommended.precio | number : "1.2-2" }}
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Banner Inferior -->
+  <section class="bottom-banner">
+    <div class="banner-content">
+      <h2 class="banner-logo">QORIKUSI</h2>
+      <p class="banner-tagline">"Joyas que despiertan tu luz interior"</p>
+    </div>
+  </section>
+</div>

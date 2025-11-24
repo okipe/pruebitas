@@ -1,0 +1,106 @@
+<div class="auth-page">
+  <div class="auth-container">
+    <div class="auth-card">
+      <h2 class="auth-title">INICIAR SESIÓN</h2>
+
+      <!-- Mensaje de Error -->
+      <div class="alert alert-danger" *ngIf="errorMessage" role="alert">
+        <i class="fas fa-exclamation-circle me-2"></i>
+        {{ errorMessage }}
+      </div>
+
+      <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+        <div class="form-group mb-3">
+          <label for="username" class="form-label"
+            >Nombre de usuario o correo electrónico</label
+          >
+          <div class="input-group">
+            <span class="input-group-text">
+              <i
+                class="fas"
+                [class.fa-user-shield]="!username?.value?.includes('@')"
+                [class.fa-envelope]="username?.value?.includes('@')"
+                [class.text-primary]="username?.value"
+              >
+              </i>
+            </span>
+            <input
+              type="text"
+              class="form-control"
+              id="username"
+              formControlName="username"
+              placeholder="usuario o correo@ejemplo.com"
+              [class.is-invalid]="username?.invalid && username?.touched"
+            />
+          </div>
+          <div
+            class="invalid-feedback d-block"
+            *ngIf="username?.invalid && username?.touched"
+          >
+            Por favor ingresa tu usuario o correo electrónico
+          </div>
+          <small class="form-text text-muted">
+            <i class="fas fa-info-circle me-1"></i>
+            Administradores: usuario (sin &#64;) | Clientes: correo electrónico
+          </small>
+        </div>
+
+        <div class="form-group mb-3">
+          <label for="password" class="form-label">Contraseña</label>
+          <input
+            type="password"
+            class="form-control"
+            id="password"
+            formControlName="password"
+            [class.is-invalid]="password?.invalid && password?.touched"
+          />
+          <div
+            class="invalid-feedback"
+            *ngIf="password?.invalid && password?.touched"
+          >
+            Por favor ingresa tu contraseña
+          </div>
+        </div>
+
+        <div class="form-check mb-3">
+          <input
+            class="form-check-input"
+            type="checkbox"
+            id="remember"
+            formControlName="rememberMe"
+          />
+          <label class="form-check-label" for="remember"> Recuérdame </label>
+        </div>
+
+        <button
+          type="submit"
+          class="btn btn-auth-primary w-100 mb-3"
+          [disabled]="loginForm.invalid || loading"
+        >
+          <span *ngIf="!loading">INGRESAR</span>
+          <span *ngIf="loading">
+            <i class="fas fa-spinner fa-spin me-2"></i>
+            Iniciando sesión...
+          </span>
+        </button>
+
+        <div class="text-center">
+          <a href="#" class="forgot-password">¿Olvidaste la contraseña?</a>
+        </div>
+
+        <div class="auth-divider">
+          <span>O</span>
+        </div>
+
+        <div class="text-center">
+          <p class="mb-0">
+            ¿No tienes una cuenta?
+            <a routerLink="/auth/register" class="link-register"
+              >Regístrate aquí</a
+            >
+          </p>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

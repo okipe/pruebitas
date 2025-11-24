@@ -1,0 +1,354 @@
+.auth-page {
+  min-height: calc(100vh - 200px);
+  background-color: #f5f3f0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+}
+
+.auth-container {
+  width: 100%;
+  max-width: 500px;
+}
+
+.auth-card {
+  background-color: #ffffff;
+  border-radius: 12px;
+  padding: 50px 40px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+}
+
+.auth-title {
+  font-size: 1.8rem;
+  font-weight: 300;
+  letter-spacing: 2px;
+  text-align: center;
+  color: #2d2d2d;
+  margin-bottom: 35px;
+}
+
+/* ========================================
+   FORM STYLES
+   ======================================== */
+
+.form-label {
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: #2d2d2d;
+  margin-bottom: 8px;
+}
+
+.form-control {
+  border: 1px solid #d0d0d0;
+  border-radius: 6px;
+  padding: 12px 15px;
+  font-size: 0.95rem;
+  transition: all 0.3s ease;
+  
+  &:focus {
+    border-color: #3d3d5c;
+    box-shadow: 0 0 0 0.2rem rgba(61, 61, 92, 0.15);
+  }
+  
+  &.is-invalid {
+    border-color: #dc3545;
+    
+    &:focus {
+      box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.15);
+    }
+  }
+}
+
+/* ========================================
+   PASSWORD INPUT WITH TOGGLE
+   ======================================== */
+
+.password-input-wrapper {
+  position: relative;
+  
+  .form-control {
+    padding-right: 45px; // Espacio para el botón
+  }
+  
+  .btn-toggle-password {
+    position: absolute;
+    right: 0;
+    top: 0;
+    height: 100%;
+    border: none;
+    background: transparent;
+    padding: 0 15px;
+    color: #999;
+    cursor: pointer;
+    transition: color 0.3s ease;
+    
+    &:hover {
+      color: #3d3d5c;
+    }
+    
+    &:focus {
+      outline: none;
+      color: #3d3d5c;
+    }
+    
+    i {
+      font-size: 1.1rem;
+    }
+  }
+}
+
+/* ========================================
+   PASSWORD REQUIREMENTS INDICATORS
+   ======================================== */
+
+.password-requirements {
+  margin-top: 12px;
+  padding: 15px;
+  background-color: #f8f9fa;
+  border-radius: 6px;
+  border-left: 3px solid #3d3d5c;
+  
+  .requirement-title {
+    display: block;
+    font-weight: 600;
+    color: #2d2d2d;
+    margin-bottom: 10px;
+    font-size: 0.85rem;
+  }
+  
+  .requirements-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    
+    li {
+      font-size: 0.85rem;
+      padding: 6px 0;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.3s ease;
+      
+      i {
+        font-size: 0.9rem;
+        min-width: 16px;
+      }
+      
+      &.valid {
+        color: #28a745;
+        
+        i {
+          color: #28a745;
+        }
+      }
+      
+      &.invalid {
+        color: #6c757d;
+        
+        i {
+          color: #dc3545;
+        }
+      }
+    }
+  }
+}
+
+/* ========================================
+   INVALID FEEDBACK MESSAGES
+   ======================================== */
+
+.invalid-feedback {
+  font-size: 0.85rem;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-top: 5px;
+  
+  &.d-block {
+    display: flex !important;
+  }
+  
+  i {
+    font-size: 0.9rem;
+  }
+}
+
+.form-check {
+  .form-check-input {
+    border-color: #d0d0d0;
+    margin-top: 0.1rem;
+    
+    &:checked {
+      background-color: #3d3d5c;
+      border-color: #3d3d5c;
+    }
+    
+    &:focus {
+      box-shadow: 0 0 0 0.2rem rgba(61, 61, 92, 0.15);
+    }
+    
+    &.is-invalid {
+      border-color: #dc3545;
+    }
+  }
+  
+  .form-check-label {
+    font-size: 0.85rem;
+    color: #5a5a5a;
+    cursor: pointer;
+    line-height: 1.5;
+  }
+}
+
+/* ========================================
+   PRIVACY INFO
+   ======================================== */
+
+.privacy-info {
+  background-color: #f5f3f0;
+  padding: 15px;
+  border-radius: 6px;
+  border-left: 3px solid #d4af37;
+  
+  .privacy-text {
+    font-size: 0.85rem;
+    color: #5a5a5a;
+    margin: 0;
+    line-height: 1.6;
+  }
+  
+  .privacy-link {
+    color: #3d3d5c;
+    font-weight: 600;
+    text-decoration: none;
+    
+    &:hover {
+      color: #d4af37;
+      text-decoration: underline;
+    }
+  }
+}
+
+.terms-link {
+  color: #3d3d5c;
+  font-weight: 600;
+  text-decoration: none;
+  
+  &:hover {
+    color: #d4af37;
+    text-decoration: underline;
+  }
+}
+
+/* ========================================
+   BUTTONS
+   ======================================== */
+
+.btn-auth-primary {
+  background-color: #3d3d5c;
+  color: #ffffff;
+  border: none;
+  border-radius: 6px;
+  padding: 14px 25px;
+  font-weight: 600;
+  font-size: 1rem;
+  letter-spacing: 1px;
+  transition: all 0.3s ease;
+  
+  &:hover:not(:disabled) {
+    background-color: #d4af37;
+    color: #3d3d5c;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(212, 175, 55, 0.3);
+  }
+  
+  &:disabled {
+    background-color: #d0d0d0;
+    cursor: not-allowed;
+  }
+}
+
+/* ========================================
+   LINKS
+   ======================================== */
+
+.link-login {
+  color: #3d3d5c;
+  font-weight: 600;
+  text-decoration: none;
+  transition: color 0.3s ease;
+  
+  &:hover {
+    color: #d4af37;
+  }
+}
+
+/* ========================================
+   DIVIDER
+   ======================================== */
+
+.auth-divider {
+  position: relative;
+  text-align: center;
+  margin: 30px 0;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background-color: #e0e0e0;
+  }
+  
+  span {
+    position: relative;
+    background-color: #ffffff;
+    padding: 0 15px;
+    color: #999;
+    font-size: 0.9rem;
+  }
+}
+
+/* ========================================
+   ALERT MESSAGES
+   ======================================== */
+
+.alert {
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  
+  i {
+    font-size: 1.1rem;
+  }
+}
+
+/* ========================================
+   RESPONSIVE
+   ======================================== */
+
+@media (max-width: 576px) {
+  .auth-card {
+    padding: 40px 25px;
+  }
+  
+  .auth-title {
+    font-size: 1.5rem;
+  }
+  
+  .privacy-text,
+  .form-check-label {
+    font-size: 0.8rem;
+  }
+  
+  .password-requirements {
+    padding: 12px;
+    
+    .requirements-list li {
+      font-size: 0.8rem;
+    }
+  }
+}

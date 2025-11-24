@@ -1,0 +1,169 @@
+<div class="cart-page">
+  
+  <!-- Banner de Envío -->
+  <div class="top-banner">
+    <p class="mb-0">Envío gratis a todo el Perú por compras mayores a S/. 250</p>
+  </div>
+
+  <div class="container py-5">
+    
+    <!-- Si el carrito está vacío -->
+    <div *ngIf="cartItems.length === 0" class="empty-cart">
+      <i class="fas fa-shopping-cart fa-4x mb-3"></i>
+      <h3>Tu carrito está vacío</h3>
+      <p>Agrega productos para comenzar tu compra</p>
+      <button class="btn btn-primary-custom" routerLink="/products">
+        Ir a la Tienda
+      </button>
+    </div>
+
+    <!-- Si hay productos en el carrito -->
+    <div *ngIf="cartItems.length > 0">
+      
+      <h1 class="cart-title mb-4">CARRITO DE COMPRAS</h1>
+
+      <div class="row">
+        
+        <!-- Lista de Productos -->
+        <div class="col-lg-8 mb-4">
+          <div class="cart-items-container">
+            
+            <!-- Item del Carrito -->
+            <div class="cart-item" *ngFor="let item of cartItems">
+              <div class="row align-items-center">
+                
+                <!-- Imagen del Producto -->
+                <div class="col-md-2 col-3">
+                  <div class="item-image">
+                    <img [src]="item.producto.imagen" [alt]="item.producto.nombre" class="img-fluid">
+                  </div>
+                </div>
+
+                <!-- Información del Producto -->
+                <div class="col-md-4 col-9">
+                  <h5 class="item-name">{{ item.producto.nombre }}</h5>
+                  <p class="item-price">s/. {{ item.producto.precio | number:'1.2-2' }}</p>
+                  <p class="item-specs" *ngIf="item.producto.especificaciones">{{ item.producto.especificaciones }}</p>
+                </div>
+
+                <!-- Cantidad -->
+                <div class="col-md-3 col-6">
+                  <div class="quantity-control">
+                    <button 
+                      class="btn-quantity" 
+                      (click)="decreaseQuantity(item)"
+                      [disabled]="item.cantidad <= 1"
+                    >
+                      <i class="fas fa-minus"></i>
+                    </button>
+                    <input 
+                      type="number" 
+                      class="quantity-input" 
+                      [(ngModel)]="item.cantidad"
+                      (change)="updateQuantity(item)"
+                      min="1"
+                      max="99"
+                    >
+                    <button 
+                      class="btn-quantity" 
+                      (click)="increaseQuantity(item)"
+                    >
+                      <i class="fas fa-plus"></i>
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Subtotal -->
+                <div class="col-md-2 col-4">
+                  <p class="item-subtotal">s/. {{ item.producto.precio * item.cantidad | number:'1.2-2' }}</p>
+                </div>
+
+                <!-- Botón Eliminar -->
+                <div class="col-md-1 col-2 text-end">
+                  <button 
+                    class="btn-remove" 
+                    (click)="removeItem(item)"
+                    aria-label="Eliminar producto"
+                  >
+                    <i class="fas fa-trash-alt"></i>
+                  </button>
+                </div>
+
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Botón Continuar Comprando -->
+          <div class="mt-4">
+            <button class="btn btn-outline-custom" routerLink="/products">
+              <i class="fas fa-arrow-left me-2"></i>
+              Continuar Comprando
+            </button>
+          </div>
+        </div>
+
+        <!-- Resumen del Pedido -->
+        <div class="col-lg-4">
+          <div class="cart-summary">
+            
+            <h4 class="summary-title">Resumen del Pedido</h4>
+
+            <!-- Detalles del Precio -->
+            <div class="summary-details">
+              <div class="summary-row">
+                <span>Subtotal ({{ getTotalItems() }} productos)</span>
+                <span>s/. {{ getSubtotal() | number:'1.2-2' }}</span>
+              </div>
+              
+              <div class="summary-row">
+                <span>Envío</span>
+                <span *ngIf="getSubtotal() >= 250" class="text-success">GRATIS</span>
+                <span *ngIf="getSubtotal() < 250">s/. {{ shippingCost | number:'1.2-2' }}</span>
+              </div>
+
+              <!-- Alerta de envío gratis -->
+              <div class="free-shipping-alert" *ngIf="getSubtotal() < 250">
+                <i class="fas fa-truck me-2"></i>
+                Te faltan <strong>s/. {{ (250 - getSubtotal()) | number:'1.2-2' }}</strong> para envío gratis
+              </div>
+
+              <div class="summary-divider"></div>
+
+              <div class="summary-row summary-total">
+                <span>Total</span>
+                <span>s/. {{ getTotal() | number:'1.2-2' }}</span>
+              </div>
+            </div>
+
+            <!-- Botones de Acción -->
+            <div class="summary-actions">
+              <button class="btn btn-primary-custom w-100 mb-3" (click)="proceedToCheckout()">
+                PROCEDER AL PAGO
+              </button>
+              <button class="btn btn-outline-custom w-100" (click)="clearCart()">
+                VACIAR CARRITO
+              </button>
+            </div>
+
+            <!-- Métodos de Pago -->
+            <div class="payment-methods">
+              <p class="payment-title">Aceptamos:</p>
+              <div class="payment-icons">
+                <i class="fab fa-cc-visa"></i>
+                <i class="fab fa-cc-mastercard"></i>
+                <i class="fab fa-cc-amex"></i>
+                <i class="fas fa-money-bill-wave"></i>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>

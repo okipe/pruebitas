@@ -1,0 +1,114 @@
+/* Importar Bootstrap */
+@import 'bootstrap/scss/bootstrap';
+@import '@fortawesome/fontawesome-free/css/all.min.css';
+
+/* Aquí irán tus estilos globales de Qorikusi */
+
+/* ========================================
+   VARIABLES DE COLORES QORIKUSI
+   ======================================== */
+
+$primary-dark: #3d3d5c;      // Azul oscuro del header/footer
+$primary-light: #f5f3f0;     // Beige claro de fondo
+$gold: #d4af37;              // Dorado para acentos
+$text-dark: #2d2d2d;         // Texto oscuro
+$text-light: #ffffff;        // Texto claro
+$border-color: #e0e0e0;      // Bordes sutiles
+
+/* ========================================
+   ESTILOS GLOBALES
+   ======================================== */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: $primary-light;
+  color: $text-dark;
+  line-height: 1.6;
+}
+
+/* Logo Typography */
+.logo-text {
+  font-family: 'Georgia', serif;
+  font-weight: 300;
+  letter-spacing: 2px;
+  font-size: 1.8rem;
+}
+
+/* Botones primarios */
+.btn-primary-custom {
+  background-color: $primary-dark;
+  color: $text-light;
+  border: none;
+  padding: 12px 30px;
+  border-radius: 0;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  
+  &:hover {
+    background-color: darken($primary-dark, 10%);
+    transform: translateY(-2px);
+  }
+}
+
+/* Botones secundarios (con borde) */
+.btn-outline-custom {
+  background-color: transparent;
+  color: $primary-dark;
+  border: 1px solid $primary-dark;
+  padding: 12px 30px;
+  border-radius: 0;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  
+  &:hover {
+    background-color: $primary-dark;
+    color: $text-light;
+  }
+}
+
+/* Acentos dorados */
+.text-gold {
+  color: $gold;
+}
+
+.bg-gold {
+  background-color: $gold;
+}
+
+/* Links sin subrayado */
+a {
+  text-decoration: none;
+  color: inherit;
+  
+  &:hover {
+    color: $gold;
+  }
+}
+
+/* Contenedor principal */
+.main-container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Espaciado consistente */
+.section-padding {
+  padding: 60px 0;
+}
+
+/* Títulos de sección */
+.section-title {
+  font-size: 2rem;
+  font-weight: 300;
+  text-align: center;
+  margin-bottom: 40px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}

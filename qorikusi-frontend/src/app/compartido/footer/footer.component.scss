@@ -1,0 +1,263 @@
+.footer-qorikusi {
+  background-color: #f5f3f0;
+  color: #2d2d2d;
+}
+
+/* ========================================
+   SECCIÓN NEWSLETTER
+   ======================================== */
+
+.newsletter-section {
+  background-color: #3d3d5c;
+  color: #ffffff;
+  padding: 60px 0;
+}
+
+.newsletter-title {
+  font-size: 1.8rem;
+  font-weight: 300;
+  letter-spacing: 2px;
+  margin-bottom: 20px;
+  text-transform: uppercase;
+}
+
+.newsletter-subtitle {
+  font-size: 1rem;
+  margin-bottom: 30px;
+  color: rgba(255, 255, 255, 0.9);
+  line-height: 1.6;
+}
+
+.newsletter-form {
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.newsletter-input {
+  background-color: transparent;
+  border: 1px solid #d4af37;
+  border-radius: 0;
+  color: #ffffff;
+  padding: 15px 20px;
+  
+  &::placeholder {
+    color: rgba(255, 255, 255, 0.6);
+  }
+  
+  &:focus {
+    background-color: transparent;
+    border-color: #d4af37;
+    color: #ffffff;
+    box-shadow: 0 0 0 0.2rem rgba(212, 175, 55, 0.25);
+  }
+}
+
+.btn-subscribe {
+  background-color: #d4af37;
+  color: #3d3d5c;
+  border: none;
+  border-radius: 0;
+  padding: 15px 30px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  transition: all 0.3s ease;
+  
+  &:hover {
+    background-color: #c49d2d;
+    transform: translateX(5px);
+  }
+}
+
+.form-check-label {
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 0.85rem;
+  
+  a {
+    color: #d4af37;
+    text-decoration: underline;
+    
+    &:hover {
+      color: #c49d2d;
+    }
+  }
+}
+
+.form-check-input {
+  border-color: #d4af37;
+  
+  &:checked {
+    background-color: #d4af37;
+    border-color: #d4af37;
+  }
+}
+
+/* ========================================
+   SECCIÓN PRINCIPAL
+   ======================================== */
+
+.footer-main {
+  padding: 60px 0 40px;
+  background-color: #f5f3f0;
+}
+
+/* Logo y Descripción */
+.footer-logo-section {
+  .footer-logo {
+    font-family: 'Georgia', serif;
+    font-size: 3rem;
+    font-weight: 300;
+    letter-spacing: 3px;
+    color: #3d3d5c;
+    margin-bottom: 20px;
+  }
+  
+  .footer-description {
+    font-size: 0.9rem;
+    line-height: 1.8;
+    color: #5a5a5a;
+    text-align: justify;
+  }
+}
+
+/* Títulos de Columnas */
+.footer-heading {
+  font-size: 1rem;
+  font-weight: 600;
+  letter-spacing: 1px;
+  margin-bottom: 20px;
+  color: #2d2d2d;
+  text-transform: uppercase;
+}
+
+/* Enlaces */
+.footer-links {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  
+  li {
+    margin-bottom: 12px;
+    
+    a {
+      color: #5a5a5a;
+      text-decoration: none;
+      font-size: 0.9rem;
+      transition: color 0.3s ease;
+      
+      &:hover {
+        color: #d4af37;
+        padding-left: 5px;
+      }
+    }
+  }
+}
+
+/* Información de Contacto */
+.footer-contact {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  
+  li {
+    margin-bottom: 15px;
+    font-size: 0.9rem;
+    color: #5a5a5a;
+    display: flex;
+    align-items: start;
+    
+    i {
+      color: #d4af37;
+      margin-top: 3px;
+      min-width: 20px;
+    }
+    
+    a {
+      color: #5a5a5a;
+      text-decoration: none;
+      transition: color 0.3s ease;
+      
+      &:hover {
+        color: #d4af37;
+      }
+    }
+  }
+}
+
+/* Redes Sociales */
+.social-icons {
+  display: flex;
+  gap: 15px;
+  
+  a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    background-color: #3d3d5c;
+    color: #ffffff;
+    border-radius: 50%;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    
+    i {
+      font-size: 1rem;
+    }
+    
+    &:hover {
+      background-color: #d4af37;
+      color: #3d3d5c;
+      transform: translateY(-3px);
+    }
+  }
+}
+
+/* ========================================
+   SECCIÓN COPYRIGHT
+   ======================================== */
+
+.footer-bottom {
+  background-color: #3d3d5c;
+  color: #ffffff;
+  padding: 20px 0;
+  
+  p {
+    font-size: 0.9rem;
+    letter-spacing: 1px;
+  }
+}
+
+/* ========================================
+   RESPONSIVE
+   ======================================== */
+
+@media (max-width: 768px) {
+  .newsletter-section {
+    padding: 40px 0;
+  }
+  
+  .newsletter-title {
+    font-size: 1.5rem;
+  }
+  
+  .newsletter-subtitle br {
+    display: none;
+  }
+  
+  .btn-subscribe {
+    width: 100%;
+    margin-top: 10px;
+  }
+  
+  .footer-main {
+    padding: 40px 0 30px;
+  }
+  
+  .footer-heading {
+    margin-top: 20px;
+  }
+  
+  .social-icons {
+    justify-content: center;
+  }
+}

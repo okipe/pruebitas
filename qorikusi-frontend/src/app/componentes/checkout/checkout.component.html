@@ -1,0 +1,392 @@
+<div class="checkout-page">
+  
+  <!-- Banner de Envío -->
+  <div class="top-banner">
+    <p class="mb-0">Envío gratis a todo el Perú por compras mayores a S/. 250</p>
+  </div>
+
+  <div class="container py-5">
+    
+    <h1 class="checkout-title mb-4">FINALIZAR COMPRA</h1>
+
+    <!-- Progress Steps -->
+    <div class="checkout-steps mb-5">
+      <div class="step" [class.active]="currentStep >= 1" [class.completed]="currentStep > 1">
+        <div class="step-number">1</div>
+        <span class="step-label">Envío</span>
+      </div>
+      <div class="step-divider"></div>
+      <div class="step" [class.active]="currentStep >= 2" [class.completed]="currentStep > 2">
+        <div class="step-number">2</div>
+        <span class="step-label">Pago</span>
+      </div>
+      <div class="step-divider"></div>
+      <div class="step" [class.active]="currentStep >= 3">
+        <div class="step-number">3</div>
+        <span class="step-label">Confirmación</span>
+      </div>
+    </div>
+
+    <div class="row">
+      
+      <!-- Formularios -->
+      <div class="col-lg-7 mb-4">
+        
+        <!-- Paso 1: Información de Envío -->
+        <div class="checkout-section" *ngIf="currentStep === 1">
+          <h3 class="section-title">Información de Envío</h3>
+          
+          <form [formGroup]="shippingForm">
+            
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <label for="firstName" class="form-label">Nombres *</label>
+                <input 
+                  type="text" 
+                  class="form-control" 
+                  id="firstName"
+                  formControlName="firstName"
+                  [class.is-invalid]="shippingForm.get('firstName')?.invalid && shippingForm.get('firstName')?.touched"
+                >
+                <div class="invalid-feedback" *ngIf="shippingForm.get('firstName')?.invalid && shippingForm.get('firstName')?.touched">
+                  Por favor ingresa tu nombre
+                </div>
+              </div>
+
+              <div class="col-md-6 mb-3">
+                <label for="lastName" class="form-label">Apellidos *</label>
+                <input 
+                  type="text" 
+                  class="form-control" 
+                  id="lastName"
+                  formControlName="lastName"
+                  [class.is-invalid]="shippingForm.get('lastName')?.invalid && shippingForm.get('lastName')?.touched"
+                >
+                <div class="invalid-feedback" *ngIf="shippingForm.get('lastName')?.invalid && shippingForm.get('lastName')?.touched">
+                  Por favor ingresa tu apellido
+                </div>
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <label for="email" class="form-label">Correo Electrónico *</label>
+              <input 
+                type="email" 
+                class="form-control" 
+                id="email"
+                formControlName="email"
+                [class.is-invalid]="shippingForm.get('email')?.invalid && shippingForm.get('email')?.touched"
+              >
+              <div class="invalid-feedback" *ngIf="shippingForm.get('email')?.errors?.['required'] && shippingForm.get('email')?.touched">
+                Por favor ingresa tu correo
+              </div>
+              <div class="invalid-feedback" *ngIf="shippingForm.get('email')?.errors?.['email'] && shippingForm.get('email')?.touched">
+                Por favor ingresa un correo válido
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <label for="phone" class="form-label">Teléfono *</label>
+              <input 
+                type="tel" 
+                class="form-control" 
+                id="phone"
+                formControlName="phone"
+                placeholder="999 999 999"
+                [class.is-invalid]="shippingForm.get('phone')?.invalid && shippingForm.get('phone')?.touched"
+              >
+              <div class="invalid-feedback" *ngIf="shippingForm.get('phone')?.invalid && shippingForm.get('phone')?.touched">
+                Por favor ingresa tu teléfono
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <label for="address" class="form-label">Dirección *</label>
+              <input 
+                type="text" 
+                class="form-control" 
+                id="address"
+                formControlName="address"
+                placeholder="Calle, número, departamento"
+                [class.is-invalid]="shippingForm.get('address')?.invalid && shippingForm.get('address')?.touched"
+              >
+              <div class="invalid-feedback" *ngIf="shippingForm.get('address')?.invalid && shippingForm.get('address')?.touched">
+                Por favor ingresa tu dirección
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <label for="city" class="form-label">Ciudad *</label>
+                <select 
+                  class="form-select" 
+                  id="city"
+                  formControlName="city"
+                  [class.is-invalid]="shippingForm.get('city')?.invalid && shippingForm.get('city')?.touched"
+                >
+                  <option value="">Selecciona una ciudad</option>
+                  <option value="Lima">Lima</option>
+                  <option value="Arequipa">Arequipa</option>
+                  <option value="Cusco">Cusco</option>
+                  <option value="Trujillo">Trujillo</option>
+                  <option value="Chiclayo">Chiclayo</option>
+                </select>
+                <div class="invalid-feedback" *ngIf="shippingForm.get('city')?.invalid && shippingForm.get('city')?.touched">
+                  Por favor selecciona una ciudad
+                </div>
+              </div>
+
+              <div class="col-md-6 mb-3">
+                <label for="postalCode" class="form-label">Código Postal</label>
+                <input 
+                  type="text" 
+                  class="form-control" 
+                  id="postalCode"
+                  formControlName="postalCode"
+                  placeholder="15001"
+                >
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <label for="notes" class="form-label">Notas del Pedido (Opcional)</label>
+              <textarea 
+                class="form-control" 
+                id="notes"
+                formControlName="notes"
+                rows="3"
+                placeholder="Instrucciones especiales de entrega"
+              ></textarea>
+            </div>
+
+            <button 
+              type="button" 
+              class="btn btn-primary-custom w-100"
+              [disabled]="shippingForm.invalid"
+              (click)="nextStep()"
+            >
+              CONTINUAR AL PAGO
+            </button>
+
+          </form>
+        </div>
+
+        <!-- Paso 2: Información de Pago -->
+        <div class="checkout-section" *ngIf="currentStep === 2">
+          <h3 class="section-title">Método de Pago</h3>
+          
+          <!-- Métodos de Pago -->
+          <div class="payment-methods-selection mb-4">
+            <div 
+              class="payment-method-card"
+              [class.selected]="selectedPaymentMethod === 'card'"
+              (click)="selectPaymentMethod('card')"
+            >
+              <i class="fas fa-credit-card"></i>
+              <span>Tarjeta de Crédito/Débito</span>
+            </div>
+            
+            <div 
+              class="payment-method-card"
+              [class.selected]="selectedPaymentMethod === 'yape'"
+              (click)="selectPaymentMethod('yape')"
+            >
+              <i class="fas fa-mobile-alt"></i>
+              <span>Yape / Plin</span>
+            </div>
+            
+            <div 
+              class="payment-method-card"
+              [class.selected]="selectedPaymentMethod === 'transfer'"
+              (click)="selectPaymentMethod('transfer')"
+            >
+              <i class="fas fa-university"></i>
+              <span>Transferencia Bancaria</span>
+            </div>
+          </div>
+
+          <!-- Formulario de Tarjeta -->
+          <form [formGroup]="paymentForm" *ngIf="selectedPaymentMethod === 'card'">
+            
+            <div class="mb-3">
+              <label for="cardName" class="form-label">Nombre en la Tarjeta *</label>
+              <input 
+                type="text" 
+                class="form-control" 
+                id="cardName"
+                formControlName="cardName"
+                placeholder="Como aparece en la tarjeta"
+                [class.is-invalid]="paymentForm.get('cardName')?.invalid && paymentForm.get('cardName')?.touched"
+              >
+              <div class="invalid-feedback" *ngIf="paymentForm.get('cardName')?.invalid && paymentForm.get('cardName')?.touched">
+                Por favor ingresa el nombre
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <label for="cardNumber" class="form-label">Número de Tarjeta *</label>
+              <input 
+                type="text" 
+                class="form-control" 
+                id="cardNumber"
+                formControlName="cardNumber"
+                placeholder="1234 5678 9012 3456"
+                maxlength="19"
+                [class.is-invalid]="paymentForm.get('cardNumber')?.invalid && paymentForm.get('cardNumber')?.touched"
+              >
+              <div class="invalid-feedback" *ngIf="paymentForm.get('cardNumber')?.invalid && paymentForm.get('cardNumber')?.touched">
+                Por favor ingresa un número de tarjeta válido
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <label for="expiryDate" class="form-label">Fecha de Vencimiento *</label>
+                <input 
+                  type="text" 
+                  class="form-control" 
+                  id="expiryDate"
+                  formControlName="expiryDate"
+                  placeholder="MM/AA"
+                  maxlength="5"
+                  [class.is-invalid]="paymentForm.get('expiryDate')?.invalid && paymentForm.get('expiryDate')?.touched"
+                >
+                <div class="invalid-feedback" *ngIf="paymentForm.get('expiryDate')?.invalid && paymentForm.get('expiryDate')?.touched">
+                  Ingresa una fecha válida
+                </div>
+              </div>
+
+              <div class="col-md-6 mb-3">
+                <label for="cvv" class="form-label">CVV *</label>
+                <input 
+                  type="text" 
+                  class="form-control" 
+                  id="cvv"
+                  formControlName="cvv"
+                  placeholder="123"
+                  maxlength="4"
+                  [class.is-invalid]="paymentForm.get('cvv')?.invalid && paymentForm.get('cvv')?.touched"
+                >
+                <div class="invalid-feedback" *ngIf="paymentForm.get('cvv')?.invalid && paymentForm.get('cvv')?.touched">
+                  Ingresa el CVV
+                </div>
+              </div>
+            </div>
+
+          </form>
+
+          <!-- Información de Yape/Plin -->
+          <div class="payment-info" *ngIf="selectedPaymentMethod === 'yape'">
+            <div class="alert alert-info">
+              <i class="fas fa-info-circle me-2"></i>
+              <strong>Instrucciones:</strong> Realiza la transferencia al número <strong>999 999 999</strong> a nombre de Qorikusi. 
+              Luego, sube tu comprobante de pago en la siguiente pantalla.
+            </div>
+          </div>
+
+          <!-- Información de Transferencia -->
+          <div class="payment-info" *ngIf="selectedPaymentMethod === 'transfer'">
+            <div class="alert alert-info">
+              <i class="fas fa-info-circle me-2"></i>
+              <strong>Datos Bancarios:</strong><br>
+              Banco BCP - Cuenta Corriente: 123-456789-0-12<br>
+              A nombre de: Qorikusi SAC<br>
+              Envía tu comprobante de pago por email a: ventas&#64;qorikusi.com
+            </div>
+          </div>
+
+          <div class="checkout-actions">
+            <button 
+              type="button" 
+              class="btn btn-outline-custom me-3"
+              (click)="previousStep()"
+            >
+              VOLVER
+            </button>
+            <button 
+              type="button" 
+              class="btn btn-primary-custom"
+              [disabled]="selectedPaymentMethod === 'card' && paymentForm.invalid"
+              (click)="nextStep()"
+            >
+              CONTINUAR A CONFIRMACIÓN
+            </button>
+          </div>
+        </div>
+
+        <!-- Paso 3: Confirmación -->
+        <div class="checkout-section" *ngIf="currentStep === 3">
+          <div class="confirmation-success text-center">
+            <i class="fas fa-check-circle fa-4x text-success mb-3"></i>
+            <h3>¡Pedido Confirmado!</h3>
+            <p>Tu número de orden es: <strong>#QRK-{{ orderNumber }}</strong></p>
+            <p>Recibirás un correo de confirmación en breve.</p>
+            
+            <div class="confirmation-actions mt-4">
+              <button class="btn btn-primary-custom me-3" routerLink="/">
+                VOLVER AL INICIO
+              </button>
+              <button class="btn btn-outline-custom" routerLink="/profile/orders">
+                VER MIS PEDIDOS
+              </button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Resumen del Pedido -->
+      <div class="col-lg-5">
+        <div class="order-summary">
+          
+          <h4 class="summary-title">Resumen del Pedido</h4>
+
+          <!-- Productos -->
+          <div class="summary-products">
+            <div class="summary-product" *ngFor="let item of orderItems">
+              <div class="product-image">
+                <img [src]="item.producto.imagen" [alt]="item.producto.nombre" class="img-fluid">
+                <span class="quantity-badge">{{ item.cantidad }}</span>
+              </div>
+              <div class="product-info">
+                <h6>{{ item.producto.nombre }}</h6>
+                <p>s/. {{ item.producto.precio | number:'1.2-2' }}</p>
+              </div>
+              <div class="product-total">
+                <p>s/. {{ item.producto.precio * item.cantidad | number:'1.2-2' }}</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Totales -->
+          <div class="summary-totals">
+            <div class="total-row">
+              <span>Subtotal</span>
+              <span>s/. {{ getSubtotal() | number:'1.2-2' }}</span>
+            </div>
+            <div class="total-row">
+              <span>Envío</span>
+              <span *ngIf="getSubtotal() >= 250" class="text-success">GRATIS</span>
+              <span *ngIf="getSubtotal() < 250">s/. {{ shippingCost | number:'1.2-2' }}</span>
+            </div>
+            <div class="total-divider"></div>
+            <div class="total-row total-final">
+              <span>Total</span>
+              <span>s/. {{ getTotal() | number:'1.2-2' }}</span>
+            </div>
+          </div>
+
+          <!-- Seguridad -->
+          <div class="security-badges">
+            <i class="fas fa-lock me-2"></i>
+            <span>Pago 100% seguro</span>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
