@@ -18,9 +18,9 @@
       <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
         <!-- CAMPO EMAIL -->
         <div class="form-group mb-3">
-          <label for="email" class="form-label"
-            >Dirección de correo electrónico</label
-          >
+          <label for="email" class="form-label">
+            Dirección de correo electrónico <span class="required-asterisk">*</span>
+          </label>
           <input
             type="email"
             class="form-control"
@@ -45,7 +45,9 @@
 
         <!-- CAMPO CONTRASEÑA -->
         <div class="form-group mb-3">
-          <label for="password" class="form-label">Contraseña</label>
+          <label for="password" class="form-label">
+            Contraseña <span class="required-asterisk">*</span>
+          </label>
           <div class="password-input-wrapper">
             <input
               [type]="showPassword ? 'text' : 'password'"
@@ -59,20 +61,14 @@
               type="button"
               class="btn-toggle-password"
               (click)="togglePasswordVisibility()"
-              [attr.aria-label]="
-                showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'
-              "
+              [attr.aria-label]="showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'"
             >
-              <i
-                class="fas"
-                [class.fa-eye]="!showPassword"
-                [class.fa-eye-slash]="showPassword"
-              ></i>
+              <i class="fas" [class.fa-eye]="!showPassword" [class.fa-eye-slash]="showPassword"></i>
             </button>
           </div>
 
           <!-- MENSAJES DE ERROR ESPECÍFICOS -->
-
+          
           <!-- Error: Campo requerido -->
           <div
             class="invalid-feedback d-block"
@@ -97,34 +93,24 @@
             *ngIf="password?.errors?.['weakPassword'] && !password?.errors?.['minLength'] && !password?.errors?.['required'] && password?.touched"
           >
             <i class="fas fa-times-circle me-1"></i>
-            La contraseña debe contener mayúsculas, minúsculas, números y
-            caracteres especiales
+            La contraseña debe contener mayúsculas, minúsculas, números y caracteres especiales
           </div>
 
           <!-- INDICADORES DE REQUISITOS DE CONTRASEÑA -->
           <div class="password-requirements" *ngIf="password?.value">
             <small class="requirement-title">Requisitos de contraseña:</small>
             <ul class="requirements-list">
-              <li
-                [class.valid]="hasMinLength()"
-                [class.invalid]="!hasMinLength()"
-              >
+              <li [class.valid]="hasMinLength()" [class.invalid]="!hasMinLength()">
                 <i class="fas fa-check-circle" *ngIf="hasMinLength()"></i>
                 <i class="fas fa-times-circle" *ngIf="!hasMinLength()"></i>
                 Al menos 8 caracteres
               </li>
-              <li
-                [class.valid]="hasUpperCase()"
-                [class.invalid]="!hasUpperCase()"
-              >
+              <li [class.valid]="hasUpperCase()" [class.invalid]="!hasUpperCase()">
                 <i class="fas fa-check-circle" *ngIf="hasUpperCase()"></i>
                 <i class="fas fa-times-circle" *ngIf="!hasUpperCase()"></i>
                 Una letra mayúscula
               </li>
-              <li
-                [class.valid]="hasLowerCase()"
-                [class.invalid]="!hasLowerCase()"
-              >
+              <li [class.valid]="hasLowerCase()" [class.invalid]="!hasLowerCase()">
                 <i class="fas fa-check-circle" *ngIf="hasLowerCase()"></i>
                 <i class="fas fa-times-circle" *ngIf="!hasLowerCase()"></i>
                 Una letra minúscula
@@ -134,10 +120,7 @@
                 <i class="fas fa-times-circle" *ngIf="!hasNumber()"></i>
                 Un número
               </li>
-              <li
-                [class.valid]="hasSpecialChar()"
-                [class.invalid]="!hasSpecialChar()"
-              >
+              <li [class.valid]="hasSpecialChar()" [class.invalid]="!hasSpecialChar()">
                 <i class="fas fa-check-circle" *ngIf="hasSpecialChar()"></i>
                 <i class="fas fa-times-circle" *ngIf="!hasSpecialChar()"></i>
                 Un carácter especial (!&#64;#$%^&*)
@@ -168,6 +151,7 @@
             He leído y acepto los
             <a href="#" class="terms-link">Términos y Condiciones</a> y
             <a href="#" class="terms-link">Política de Privacidad</a>
+            <span class="required-asterisk">*</span>
           </label>
           <div
             class="invalid-feedback d-block"
@@ -197,9 +181,7 @@
         <div class="text-center">
           <p class="mb-0">
             ¿Ya tienes una cuenta?
-            <a routerLink="/auth/login" class="link-login"
-              >Inicia sesión aquí</a
-            >
+            <a routerLink="/auth/login" class="link-login">Inicia sesión aquí</a>
           </p>
         </div>
       </form>
