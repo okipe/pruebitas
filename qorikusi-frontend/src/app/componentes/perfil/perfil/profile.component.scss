@@ -1,0 +1,518 @@
+.profile-page {
+  background-color: #f5f3f0;
+  min-height: calc(100vh - 200px);
+}
+
+/* ========================================
+   HEADER
+   ======================================== */
+
+.profile-header {
+  text-align: center;
+  padding: 20px 0;
+
+  .profile-title {
+    font-size: 2rem;
+    font-weight: 300;
+    letter-spacing: 2px;
+    color: #2d2d2d;
+    margin-bottom: 10px;
+  }
+
+  .profile-subtitle {
+    font-size: 1rem;
+    color: #5a5a5a;
+    margin: 0;
+  }
+}
+
+/* ========================================
+   SIDEBAR
+   ======================================== */
+
+.profile-sidebar {
+  background-color: #fff;
+  border-radius: 8px;
+  padding: 25px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+
+  .sidebar-title {
+    font-size: 1rem;
+    font-weight: 600;
+    letter-spacing: 1px;
+    margin-bottom: 20px;
+    color: #2d2d2d;
+    text-transform: uppercase;
+  }
+
+  .sidebar-menu {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+
+    .menu-item {
+      padding: 12px 15px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      border-radius: 6px;
+      margin-bottom: 8px;
+      color: #5a5a5a;
+      font-size: 0.95rem;
+
+      i {
+        color: #999;
+        width: 20px;
+      }
+
+      &:hover {
+        background-color: #f5f3f0;
+        color: #3d3d5c;
+
+        i {
+          color: #d4af37;
+        }
+      }
+
+      &.active {
+        background-color: rgba(61, 61, 92, 0.1);
+        color: #3d3d5c;
+        font-weight: 600;
+        border-left: 3px solid #d4af37;
+
+        i {
+          color: #d4af37;
+        }
+      }
+    }
+  }
+}
+
+/* ========================================
+   LOYALTY CARD
+   ======================================== */
+
+.loyalty-card {
+  background: linear-gradient(135deg, #3d3d5c 0%, #2d2d4c 100%);
+  border-radius: 8px;
+  padding: 25px;
+  text-align: center;
+  color: #fff;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+
+  .loyalty-header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-bottom: 15px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    letter-spacing: 1px;
+
+    i {
+      color: #d4af37;
+      font-size: 1.2rem;
+    }
+  }
+
+  .loyalty-points {
+    font-size: 3rem;
+    font-weight: 700;
+    color: #d4af37;
+    margin-bottom: 5px;
+  }
+
+  .loyalty-text {
+    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.8);
+    margin: 0;
+  }
+}
+
+/* ========================================
+   PROFILE CONTENT
+   ======================================== */
+
+.profile-content {
+  background-color: #fff;
+  border-radius: 8px;
+  padding: 35px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.profile-section {
+  padding-bottom: 20px;
+  border-bottom: 1px solid #f0f0f0;
+
+  &:last-child {
+    border-bottom: none;
+  }
+
+  .section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+
+    .section-title {
+      font-size: 1.2rem;
+      font-weight: 500;
+      color: #2d2d2d;
+      margin: 0;
+      display: flex;
+      align-items: center;
+
+      .text-gold {
+        color: #d4af37;
+      }
+    }
+  }
+}
+
+/* ========================================
+   FORM STYLES
+   ======================================== */
+
+.form-label {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #2d2d2d;
+  margin-bottom: 8px;
+
+  .required {
+    color: #dc3545;
+    font-weight: bold;
+  }
+}
+
+.form-control,
+.form-select {
+  border: 1px solid #d0d0d0;
+  border-radius: 6px;
+  padding: 12px 15px;
+  font-size: 0.95rem;
+  transition: all 0.3s ease;
+
+  &:focus {
+    border-color: #3d3d5c;
+    box-shadow: 0 0 0 0.2rem rgba(61, 61, 92, 0.15);
+  }
+
+  &:disabled {
+    background-color: #f8f9fa;
+    cursor: not-allowed;
+  }
+
+  &.is-invalid {
+    border-color: #dc3545;
+
+    &:focus {
+      box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.15);
+    }
+  }
+}
+
+.form-text {
+  font-size: 0.8rem;
+  color: #6c757d;
+  margin-top: 5px;
+  display: block;
+}
+
+.invalid-feedback {
+  font-size: 0.85rem;
+}
+
+/* ========================================
+   BUTTONS
+   ======================================== */
+
+.btn-edit,
+.btn-cancel,
+.btn-add {
+  padding: 8px 20px;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  transition: all 0.3s ease;
+  border: none;
+}
+
+.btn-edit {
+  background-color: #3d3d5c;
+  color: #fff;
+
+  &:hover {
+    background-color: #2d2d4c;
+  }
+}
+
+.btn-cancel {
+  background-color: #6c757d;
+  color: #fff;
+
+  &:hover {
+    background-color: #5a6268;
+  }
+}
+
+.btn-add {
+  background-color: #d4af37;
+  color: #3d3d5c;
+
+  &:hover {
+    background-color: #c49d2d;
+  }
+}
+
+.btn-primary-custom {
+  background-color: #3d3d5c;
+  color: #fff;
+  border: none;
+  padding: 12px 30px;
+  border-radius: 6px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  transition: all 0.3s ease;
+
+  &:hover:not(:disabled) {
+    background-color: #d4af37;
+    color: #3d3d5c;
+    transform: translateY(-2px);
+  }
+
+  &:disabled {
+    background-color: #d0d0d0;
+    cursor: not-allowed;
+  }
+}
+
+.btn-outline-custom {
+  background-color: transparent;
+  color: #3d3d5c;
+  border: 2px solid #3d3d5c;
+  padding: 10px 30px;
+  border-radius: 6px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  transition: all 0.3s ease;
+
+  &:hover {
+    background-color: #3d3d5c;
+    color: #fff;
+  }
+}
+
+.form-actions {
+  text-align: right;
+}
+
+/* ========================================
+   DIRECCIONES PREVIEW
+   ======================================== */
+
+.direcciones-preview {
+  .direccion-card {
+    display: flex;
+    align-items: start;
+    gap: 15px;
+    padding: 15px;
+    background-color: #f8f9fa;
+    border-radius: 6px;
+    margin-bottom: 12px;
+
+    .direccion-icon {
+      color: #d4af37;
+      font-size: 1.5rem;
+      margin-top: 5px;
+    }
+
+    .direccion-info {
+      flex: 1;
+
+      .direccion-calle {
+        font-weight: 500;
+        color: #2d2d2d;
+        margin: 0 0 5px 0;
+      }
+
+      .direccion-ubigeo {
+        font-size: 0.9rem;
+        color: #6c757d;
+        margin: 0;
+      }
+    }
+  }
+}
+
+/* ========================================
+   EMPTY STATE
+   ======================================== */
+
+.empty-state {
+  text-align: center;
+  padding: 40px 20px;
+  color: #999;
+
+  p {
+    font-size: 1rem;
+    margin: 10px 0 20px;
+  }
+}
+
+/* ========================================
+   MODALS
+   ======================================== */
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+  animation: fadeIn 0.3s ease;
+}
+
+.modal-content {
+  background-color: #fff;
+  border-radius: 8px;
+  width: 90%;
+  max-width: 500px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  animation: slideIn 0.3s ease;
+}
+
+.modal-header {
+  padding: 25px 30px;
+  border-bottom: 1px solid #e0e0e0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  .modal-title {
+    font-size: 1.3rem;
+    font-weight: 500;
+    color: #2d2d2d;
+    margin: 0;
+  }
+
+  .btn-close-modal {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    color: #999;
+    cursor: pointer;
+    transition: color 0.3s ease;
+
+    &:hover {
+      color: #2d2d2d;
+    }
+  }
+}
+
+.modal-body {
+  padding: 30px;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 15px;
+  margin-top: 20px;
+}
+
+/* ========================================
+   ANIMATIONS
+   ======================================== */
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateY(-50px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* ========================================
+   RESPONSIVE
+   ======================================== */
+
+@media (max-width: 992px) {
+  .profile-sidebar {
+    margin-bottom: 30px;
+  }
+
+  .loyalty-card {
+    margin-top: 0;
+  }
+}
+
+@media (max-width: 768px) {
+  .profile-header .profile-title {
+    font-size: 1.5rem;
+  }
+
+  .profile-content {
+    padding: 25px 20px;
+  }
+
+  .section-header {
+    flex-direction: column;
+    align-items: flex-start !important;
+    gap: 15px;
+
+    .btn-edit,
+    .btn-cancel,
+    .btn-add {
+      width: 100%;
+    }
+  }
+
+  .form-actions {
+    text-align: center;
+
+    .btn-primary-custom {
+      width: 100%;
+    }
+  }
+
+  .modal-content {
+    width: 95%;
+  }
+
+  .modal-header {
+    padding: 20px;
+  }
+
+  .modal-body {
+    padding: 20px;
+  }
+
+  .modal-actions {
+    flex-direction: column;
+
+    button {
+      width: 100%;
+    }
+  }
+}

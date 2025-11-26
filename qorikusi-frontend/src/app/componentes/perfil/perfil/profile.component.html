@@ -1,1 +1,533 @@
-<p>profile works!</p>
+<div class="profile-page">
+  <div class="container py-5">
+    <!-- Cabecera -->
+    <div class="profile-header mb-5">
+      <h1 class="profile-title">MI PERFIL</h1>
+      <p class="profile-subtitle">
+        Administra tu información personal y preferencias
+      </p>
+    </div>
+
+    <!-- Mensajes de éxito/error globales -->
+    <div
+      class="alert alert-success"
+      *ngIf="successMessage && !showPasswordModal && !showEmailModal"
+      role="alert"
+    >
+      <i class="fas fa-check-circle me-2"></i>
+      {{ successMessage }}
+    </div>
+
+    <div
+      class="alert alert-danger"
+      *ngIf="errorMessage && !showPasswordModal && !showEmailModal"
+      role="alert"
+    >
+      <i class="fas fa-exclamation-circle me-2"></i>
+      {{ errorMessage }}
+    </div>
+
+    <div class="row">
+      <!-- Columna Izquierda - Menú de Navegación -->
+      <div class="col-lg-3 mb-4">
+        <div class="profile-sidebar">
+          <h5 class="sidebar-title">Navegación</h5>
+          <ul class="sidebar-menu">
+            <li class="menu-item active">
+              <i class="fas fa-user me-2"></i>
+              Información Personal
+            </li>
+            <li class="menu-item" (click)="irADirecciones()">
+              <i class="fas fa-map-marker-alt me-2"></i>
+              Mis Direcciones
+            </li>
+            <li class="menu-item" routerLink="/profile/orders">
+              <i class="fas fa-shopping-bag me-2"></i>
+              Mis Pedidos
+            </li>
+            <li class="menu-item" (click)="openPasswordModal()">
+              <i class="fas fa-lock me-2"></i>
+              Cambiar Contraseña
+            </li>
+            <li class="menu-item" (click)="openEmailModal()">
+              <i class="fas fa-envelope me-2"></i>
+              Cambiar Correo
+            </li>
+          </ul>
+        </div>
+
+        <!-- Card de Puntos de Fidelidad -->
+        <div class="loyalty-card mt-4" *ngIf="clienteData">
+          <div class="loyalty-header">
+            <i class="fas fa-star"></i>
+            <span>PUNTOS QORIKUSI</span>
+          </div>
+          <div class="loyalty-points">
+            {{ clienteData.puntos || 0 }}
+          </div>
+          <p class="loyalty-text">Puntos disponibles</p>
+        </div>
+      </div>
+
+      <!-- Columna Derecha - Formulario -->
+      <div class="col-lg-9">
+        <div class="profile-content">
+          <!-- Loading Spinner -->
+          <div class="text-center py-5" *ngIf="loading && !clienteData">
+            <i class="fas fa-spinner fa-spin fa-3x text-primary"></i>
+            <p class="mt-3">Cargando información...</p>
+          </div>
+
+          <!-- Formulario de Perfil -->
+          <form
+            [formGroup]="profileForm"
+            (ngSubmit)="guardarCambios()"
+            *ngIf="!loading || clienteData"
+          >
+            <!-- Sección: Información Personal -->
+            <div class="profile-section">
+              <div class="section-header">
+                <h4 class="section-title">Información Personal</h4>
+                <button
+                  type="button"
+                  class="btn btn-edit"
+                  (click)="toggleEditMode()"
+                  *ngIf="!editMode"
+                >
+                  <i class="fas fa-edit me-2"></i>
+                  EDITAR
+                </button>
+                <button
+                  type="button"
+                  class="btn btn-cancel"
+                  (click)="toggleEditMode()"
+                  *ngIf="editMode"
+                >
+                  <i class="fas fa-times me-2"></i>
+                  CANCELAR
+                </button>
+              </div>
+
+              <div class="row">
+                <div class="col-md-6 mb-3">
+                  <label for="nombres" class="form-label">
+                    Nombres <span class="required">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="nombres"
+                    formControlName="nombres"
+                    placeholder="Ingresa tus nombres"
+                    [class.is-invalid]="nombres?.invalid && nombres?.touched"
+                  />
+                  <div
+                    class="invalid-feedback"
+                    *ngIf="nombres?.errors?.['required'] && nombres?.touched"
+                  >
+                    Este campo es obligatorio
+                  </div>
+                  <div
+                    class="invalid-feedback"
+                    *ngIf="nombres?.errors?.['fullName'] && nombres?.touched"
+                  >
+                    {{ nombres?.errors?.['fullName'].message }}
+                  </div>
+                  <div
+                    class="invalid-feedback"
+                    *ngIf="nombres?.errors?.['maxlength'] && nombres?.touched"
+                  >
+                    Máximo 100 caracteres
+                  </div>
+                </div>
+
+                <div class="col-md-6 mb-3">
+                  <label for="apellidos" class="form-label">
+                    Apellidos <span class="required">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="apellidos"
+                    formControlName="apellidos"
+                    placeholder="Ingresa tus apellidos"
+                    [class.is-invalid]="
+                      apellidos?.invalid && apellidos?.touched
+                    "
+                  />
+                  <div
+                    class="invalid-feedback"
+                    *ngIf="apellidos?.errors?.['required'] && apellidos?.touched"
+                  >
+                    Este campo es obligatorio
+                  </div>
+                  <div
+                    class="invalid-feedback"
+                    *ngIf="apellidos?.errors?.['fullName'] && apellidos?.touched"
+                  >
+                    {{ apellidos?.errors?.['fullName'].message }}
+                  </div>
+                  <div
+                    class="invalid-feedback"
+                    *ngIf="apellidos?.errors?.['maxlength'] && apellidos?.touched"
+                  >
+                    Máximo 100 caracteres
+                  </div>
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="col-md-6 mb-3">
+                  <label for="telefono" class="form-label">
+                    Teléfono <span class="required">*</span>
+                  </label>
+                  <input
+                    type="tel"
+                    class="form-control"
+                    id="telefono"
+                    formControlName="telefono"
+                    placeholder="999 999 999"
+                    [class.is-invalid]="telefono?.invalid && telefono?.touched"
+                  />
+                  <div
+                    class="invalid-feedback"
+                    *ngIf="telefono?.errors?.['required'] && telefono?.touched"
+                  >
+                    Este campo es obligatorio
+                  </div>
+                  <div
+                    class="invalid-feedback"
+                    *ngIf="telefono?.errors?.['numbersOnly'] && telefono?.touched"
+                  >
+                    {{ telefono?.errors?.['numbersOnly'].message }}
+                  </div>
+                  <div
+                    class="invalid-feedback"
+                    *ngIf="telefono?.errors?.['maxlength'] && telefono?.touched"
+                  >
+                    Máximo 20 caracteres
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Sección: Preferencias Espirituales -->
+            <div class="profile-section mt-4">
+              <div class="section-header">
+                <h4 class="section-title">
+                  <i class="fas fa-moon me-2 text-gold"></i>
+                  Preferencias Espirituales
+                </h4>
+              </div>
+
+              <div class="row">
+                <div class="col-md-6 mb-3">
+                  <label for="signoZodiacal" class="form-label">
+                    Signo Zodiacal
+                  </label>
+                  <select
+                    class="form-select"
+                    id="signoZodiacal"
+                    formControlName="signoZodiacal"
+                  >
+                    <option value="">Selecciona tu signo</option>
+                    <option
+                      *ngFor="let signo of signosZodiacales"
+                      [value]="signo"
+                    >
+                      {{ signo }}
+                    </option>
+                  </select>
+                  <small class="form-text"
+                    >Ayúdanos a recomendarte joyas según tu energía</small
+                  >
+                </div>
+
+                <div class="col-md-6 mb-3">
+                  <label for="faseLunarPreferida" class="form-label">
+                    Fase Lunar Preferida
+                  </label>
+                  <select
+                    class="form-select"
+                    id="faseLunarPreferida"
+                    formControlName="faseLunarPreferida"
+                  >
+                    <option value="">Selecciona una fase</option>
+                    <option *ngFor="let fase of fasesLunares" [value]="fase">
+                      {{ fase }}
+                    </option>
+                  </select>
+                  <small class="form-text"
+                    >Conecta con la energía lunar que más resuena contigo</small
+                  >
+                </div>
+              </div>
+            </div>
+
+            <!-- Botón Guardar -->
+            <div class="form-actions mt-4" *ngIf="editMode">
+              <button
+                type="submit"
+                class="btn btn-primary-custom"
+                [disabled]="profileForm.invalid || loading"
+              >
+                <span *ngIf="!loading">
+                  <i class="fas fa-save me-2"></i>
+                  GUARDAR CAMBIOS
+                </span>
+                <span *ngIf="loading">
+                  <i class="fas fa-spinner fa-spin me-2"></i>
+                  Guardando...
+                </span>
+              </button>
+            </div>
+          </form>
+
+          <!-- Sección de Direcciones (Vista Rápida) -->
+          <div class="profile-section mt-4" *ngIf="!loading">
+            <div class="section-header">
+              <h4 class="section-title">
+                <i class="fas fa-map-marker-alt me-2"></i>
+                Mis Direcciones
+              </h4>
+              <button
+                type="button"
+                class="btn btn-add"
+                (click)="irADirecciones()"
+              >
+                <i class="fas fa-plus me-2"></i>
+                GESTIONAR
+              </button>
+            </div>
+
+            <div class="direcciones-preview" *ngIf="direcciones.length > 0">
+              <div
+                class="direccion-card"
+                *ngFor="let direccion of direcciones.slice(0, 2)"
+              >
+                <i class="fas fa-home direccion-icon"></i>
+                <div class="direccion-info">
+                  <p class="direccion-calle">{{ direccion.calle }}</p>
+                  <p class="direccion-ubigeo">
+                    {{ direccion.distrito }}, {{ direccion.provincia }},
+                    {{ direccion.departamento }}
+                  </p>
+                </div>
+              </div>
+              <p class="text-muted mt-3" *ngIf="direcciones.length > 2">
+                <i class="fas fa-info-circle me-1"></i>
+                Tienes {{ direcciones.length - 2 }} dirección(es) adicional(es)
+              </p>
+            </div>
+
+            <div class="empty-state" *ngIf="direcciones.length === 0">
+              <i class="fas fa-map-marked-alt fa-3x text-muted mb-3"></i>
+              <p>No tienes direcciones registradas</p>
+              <button class="btn btn-outline-custom" (click)="irADirecciones()">
+                AGREGAR DIRECCIÓN
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: Cambiar Contraseña -->
+<div
+  class="modal-overlay"
+  *ngIf="showPasswordModal"
+  (click)="closePasswordModal()"
+>
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3 class="modal-title">Cambiar Contraseña</h3>
+      <button class="btn-close-modal" (click)="closePasswordModal()">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+
+    <div class="modal-body">
+      <!-- Mensajes -->
+      <div class="alert alert-success" *ngIf="successMessage" role="alert">
+        <i class="fas fa-check-circle me-2"></i>
+        {{ successMessage }}
+      </div>
+
+      <div class="alert alert-danger" *ngIf="errorMessage" role="alert">
+        <i class="fas fa-exclamation-circle me-2"></i>
+        {{ errorMessage }}
+      </div>
+
+      <form [formGroup]="passwordForm" (ngSubmit)="cambiarContrasenia()">
+        <div class="mb-3">
+          <label for="actualContrasenia" class="form-label"
+            >Contraseña Actual *</label
+          >
+          <input
+            type="password"
+            class="form-control"
+            id="actualContrasenia"
+            formControlName="actualContrasenia"
+            placeholder="Ingresa tu contraseña actual"
+            [class.is-invalid]="
+              passwordForm.get('actualContrasenia')?.invalid &&
+              passwordForm.get('actualContrasenia')?.touched
+            "
+          />
+        </div>
+
+        <div class="mb-3">
+          <label for="nuevaContrasenia" class="form-label"
+            >Nueva Contraseña *</label
+          >
+          <input
+            type="password"
+            class="form-control"
+            id="nuevaContrasenia"
+            formControlName="nuevaContrasenia"
+            placeholder="Mínimo 8 caracteres"
+            [class.is-invalid]="
+              passwordForm.get('nuevaContrasenia')?.invalid &&
+              passwordForm.get('nuevaContrasenia')?.touched
+            "
+          />
+        </div>
+
+        <div class="mb-3">
+          <label for="confirmarContrasenia" class="form-label"
+            >Confirmar Nueva Contraseña *</label
+          >
+          <input
+            type="password"
+            class="form-control"
+            id="confirmarContrasenia"
+            formControlName="confirmarContrasenia"
+            placeholder="Repite la nueva contraseña"
+            [class.is-invalid]="
+              passwordForm.get('confirmarContrasenia')?.invalid &&
+              passwordForm.get('confirmarContrasenia')?.touched
+            "
+          />
+        </div>
+
+        <div class="modal-actions">
+          <button
+            type="button"
+            class="btn btn-outline-custom"
+            (click)="closePasswordModal()"
+          >
+            CANCELAR
+          </button>
+          <button
+            type="submit"
+            class="btn btn-primary-custom"
+            [disabled]="passwordForm.invalid || loading"
+          >
+            <span *ngIf="!loading">CAMBIAR CONTRASEÑA</span>
+            <span *ngIf="loading">
+              <i class="fas fa-spinner fa-spin me-2"></i>
+              Cambiando...
+            </span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: Cambiar Correo -->
+<div class="modal-overlay" *ngIf="showEmailModal" (click)="closeEmailModal()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3 class="modal-title">Cambiar Correo Electrónico</h3>
+      <button class="btn-close-modal" (click)="closeEmailModal()">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+
+    <div class="modal-body">
+      <!-- Mensajes -->
+      <div class="alert alert-success" *ngIf="successMessage" role="alert">
+        <i class="fas fa-check-circle me-2"></i>
+        {{ successMessage }}
+      </div>
+
+      <div class="alert alert-danger" *ngIf="errorMessage" role="alert">
+        <i class="fas fa-exclamation-circle me-2"></i>
+        {{ errorMessage }}
+      </div>
+
+      <form [formGroup]="emailForm" (ngSubmit)="cambiarCorreo()">
+        <div class="mb-3">
+          <label for="actualCorreo" class="form-label">Correo Actual *</label>
+          <input
+            type="email"
+            class="form-control"
+            id="actualCorreo"
+            formControlName="actualCorreo"
+            placeholder="correo@ejemplo.com"
+            [class.is-invalid]="
+              emailForm.get('actualCorreo')?.invalid &&
+              emailForm.get('actualCorreo')?.touched
+            "
+          />
+        </div>
+
+        <div class="mb-3">
+          <label for="nuevoCorreo" class="form-label">Nuevo Correo *</label>
+          <input
+            type="email"
+            class="form-control"
+            id="nuevoCorreo"
+            formControlName="nuevoCorreo"
+            placeholder="nuevo@ejemplo.com"
+            [class.is-invalid]="
+              emailForm.get('nuevoCorreo')?.invalid &&
+              emailForm.get('nuevoCorreo')?.touched
+            "
+          />
+        </div>
+
+        <div class="mb-3">
+          <label for="confirmarCorreo" class="form-label"
+            >Confirmar Nuevo Correo *</label
+          >
+          <input
+            type="email"
+            class="form-control"
+            id="confirmarCorreo"
+            formControlName="confirmarCorreo"
+            placeholder="nuevo@ejemplo.com"
+            [class.is-invalid]="
+              emailForm.get('confirmarCorreo')?.invalid &&
+              emailForm.get('confirmarCorreo')?.touched
+            "
+          />
+        </div>
+
+        <div class="modal-actions">
+          <button
+            type="button"
+            class="btn btn-outline-custom"
+            (click)="closeEmailModal()"
+          >
+            CANCELAR
+          </button>
+          <button
+            type="submit"
+            class="btn btn-primary-custom"
+            [disabled]="emailForm.invalid || loading"
+          >
+            <span *ngIf="!loading">CAMBIAR CORREO</span>
+            <span *ngIf="loading">
+              <i class="fas fa-spinner fa-spin me-2"></i>
+              Cambiando...
+            </span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

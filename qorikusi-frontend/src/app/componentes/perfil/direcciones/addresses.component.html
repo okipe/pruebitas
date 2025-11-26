@@ -1,0 +1,272 @@
+<div class="addresses-page">
+  <div class="container py-5">
+    
+    <!-- Cabecera con botón de volver -->
+    <div class="addresses-header mb-4">
+      <button class="btn btn-back" (click)="volverAlPerfil()">
+        <i class="fas fa-arrow-left me-2"></i>
+        VOLVER AL PERFIL
+      </button>
+      <div class="header-content">
+        <h1 class="addresses-title">MIS DIRECCIONES</h1>
+        <p class="addresses-subtitle">Gestiona las direcciones de envío para tus pedidos</p>
+      </div>
+      <button class="btn btn-add-new" (click)="openModal()">
+        <i class="fas fa-plus me-2"></i>
+        NUEVA DIRECCIÓN
+      </button>
+    </div>
+
+    <!-- Mensajes de éxito/error globales -->
+    <div class="alert alert-success" *ngIf="successMessage && !showModal" role="alert">
+      <i class="fas fa-check-circle me-2"></i>
+      {{ successMessage }}
+    </div>
+
+    <div class="alert alert-danger" *ngIf="errorMessage && !showModal" role="alert">
+      <i class="fas fa-exclamation-circle me-2"></i>
+      {{ errorMessage }}
+    </div>
+
+    <!-- Loading Spinner -->
+    <div class="text-center py-5" *ngIf="loading && direcciones.length === 0">
+      <i class="fas fa-spinner fa-spin fa-3x text-primary"></i>
+      <p class="mt-3">Cargando direcciones...</p>
+    </div>
+
+    <!-- Lista de Direcciones -->
+    <div class="addresses-grid" *ngIf="!loading || direcciones.length > 0">
+      
+      <!-- Card de dirección -->
+      <div class="address-card" *ngFor="let direccion of direcciones">
+        <div class="address-icon">
+          <i class="fas fa-map-marker-alt"></i>
+        </div>
+        
+        <div class="address-content">
+          <h5 class="address-street">{{ direccion.calle }}</h5>
+          <p class="address-location">
+            <i class="fas fa-location-arrow me-1"></i>
+            {{ direccion.distrito }}
+          </p>
+          <p class="address-region">
+            {{ direccion.provincia }}, {{ direccion.departamento }}
+          </p>
+          <p class="address-code">
+            <i class="fas fa-hashtag me-1"></i>
+            Código Ubigeo: {{ direccion.codigoUbigeo }}
+          </p>
+        </div>
+        
+        <div class="address-actions">
+          <button 
+            class="btn btn-edit-address"
+            (click)="openEditModal(direccion)"
+            [disabled]="loading"
+          >
+            <i class="fas fa-edit"></i>
+            Editar
+          </button>
+          <button 
+            class="btn btn-delete-address"
+            (click)="eliminarDireccion(direccion)"
+            [disabled]="loading"
+          >
+            <i class="fas fa-trash-alt"></i>
+            Eliminar
+          </button>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Empty State -->
+    <div class="empty-state" *ngIf="!loading && direcciones.length === 0">
+      <i class="fas fa-map-marked-alt fa-4x mb-3"></i>
+      <h3>No tienes direcciones registradas</h3>
+      <p>Agrega tu primera dirección para facilitar tus compras</p>
+      <button class="btn btn-primary-custom" (click)="openModal()">
+        <i class="fas fa-plus me-2"></i>
+        AGREGAR DIRECCIÓN
+      </button>
+    </div>
+
+  </div>
+</div>
+
+<!-- Modal: Agregar/Editar Dirección -->
+<div class="modal-overlay" *ngIf="showModal" (click)="closeModal()">
+  <div class="modal-content modal-large" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3 class="modal-title">
+        <i class="fas fa-map-marker-alt me-2"></i>
+        {{ editMode ? 'Editar Dirección' : 'Nueva Dirección' }}
+      </h3>
+      <button class="btn-close-modal" (click)="closeModal()">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+
+    <div class="modal-body">
+      <!-- Mensajes en modal -->
+      <div class="alert alert-success" *ngIf="successMessage" role="alert">
+        <i class="fas fa-check-circle me-2"></i>
+        {{ successMessage }}
+      </div>
+
+      <div class="alert alert-danger" *ngIf="errorMessage" role="alert">
+        <i class="fas fa-exclamation-circle me-2"></i>
+        {{ errorMessage }}
+      </div>
+
+      <form [formGroup]="direccionForm" (ngSubmit)="guardarDireccion()">
+        
+        <!-- Sección de Ubicación -->
+        <div class="form-section">
+          <h5 class="section-subtitle">
+            <i class="fas fa-map me-2 text-gold"></i>
+            Ubicación
+          </h5>
+          <p class="section-description">
+            Selecciona tu ubicación usando los menús desplegables. El sistema cargará automáticamente
+            las opciones disponibles según tu selección.
+          </p>
+
+          <div class="row">
+            <!-- Departamento -->
+            <div class="col-md-4 mb-3">
+              <label for="departamento" class="form-label">
+                Departamento <span class="required">*</span>
+              </label>
+              <select
+                class="form-select"
+                id="departamento"
+                formControlName="departamento"
+                [class.is-invalid]="departamento?.invalid && departamento?.touched"
+              >
+                <option value="">Selecciona</option>
+                <option *ngFor="let dep of departamentos" [value]="dep">
+                  {{ dep }}
+                </option>
+              </select>
+              <div class="invalid-feedback" *ngIf="departamento?.invalid && departamento?.touched">
+                Este campo es obligatorio
+              </div>
+            </div>
+
+            <!-- Provincia -->
+            <div class="col-md-4 mb-3">
+              <label for="provincia" class="form-label">
+                Provincia <span class="required">*</span>
+              </label>
+              <select
+                class="form-select"
+                id="provincia"
+                formControlName="provincia"
+                [class.is-invalid]="provincia?.invalid && provincia?.touched"
+                [disabled]="!departamento?.value"
+              >
+                <option value="">Selecciona</option>
+                <option *ngFor="let prov of provincias" [value]="prov">
+                  {{ prov }}
+                </option>
+              </select>
+              <div class="invalid-feedback" *ngIf="provincia?.invalid && provincia?.touched">
+                Este campo es obligatorio
+              </div>
+              <small class="form-text" *ngIf="!departamento?.value">
+                Primero selecciona un departamento
+              </small>
+            </div>
+
+            <!-- Distrito -->
+            <div class="col-md-4 mb-3">
+              <label for="distrito" class="form-label">
+                Distrito <span class="required">*</span>
+              </label>
+              <select
+                class="form-select"
+                id="distrito"
+                formControlName="distrito"
+                [class.is-invalid]="distrito?.invalid && distrito?.touched"
+                [disabled]="!provincia?.value"
+              >
+                <option value="">Selecciona</option>
+                <option *ngFor="let dist of distritos" [value]="dist">
+                  {{ dist }}
+                </option>
+              </select>
+              <div class="invalid-feedback" *ngIf="distrito?.invalid && distrito?.touched">
+                Este campo es obligatorio
+              </div>
+              <small class="form-text" *ngIf="!provincia?.value">
+                Primero selecciona una provincia
+              </small>
+            </div>
+          </div>
+        </div>
+
+        <!-- Sección de Dirección -->
+        <div class="form-section mt-4">
+          <h5 class="section-subtitle">
+            <i class="fas fa-home me-2 text-gold"></i>
+            Dirección Detallada
+          </h5>
+          <p class="section-description">
+            Proporciona tu dirección completa incluyendo calle, número, piso, departamento, etc.
+          </p>
+
+          <div class="mb-3">
+            <label for="calle" class="form-label">
+              Calle y Número <span class="required">*</span>
+            </label>
+            <textarea
+              class="form-control"
+              id="calle"
+              formControlName="calle"
+              rows="3"
+              placeholder="Ej: Av. José Larco 123, Piso 4, Dpto. 401"
+              [class.is-invalid]="calle?.invalid && calle?.touched"
+            ></textarea>
+            <div class="invalid-feedback" *ngIf="calle?.errors?.['required'] && calle?.touched">
+              Este campo es obligatorio
+            </div>
+            <div class="invalid-feedback" *ngIf="calle?.errors?.['maxlength'] && calle?.touched">
+              La dirección no puede exceder los 250 caracteres
+            </div>
+            <small class="form-text">
+              Máximo 250 caracteres
+            </small>
+          </div>
+        </div>
+
+        <!-- Botones de acción -->
+        <div class="modal-actions mt-4">
+          <button 
+            type="button" 
+            class="btn btn-outline-custom" 
+            (click)="closeModal()"
+            [disabled]="loading"
+          >
+            CANCELAR
+          </button>
+          <button 
+            type="submit" 
+            class="btn btn-primary-custom"
+            [disabled]="direccionForm.invalid || loading"
+          >
+            <span *ngIf="!loading">
+              <i class="fas fa-save me-2"></i>
+              {{ editMode ? 'GUARDAR CAMBIOS' : 'AGREGAR DIRECCIÓN' }}
+            </span>
+            <span *ngIf="loading">
+              <i class="fas fa-spinner fa-spin me-2"></i>
+              Guardando...
+            </span>
+          </button>
+        </div>
+
+      </form>
+    </div>
+  </div>
+</div>
