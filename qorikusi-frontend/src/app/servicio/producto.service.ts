@@ -1,9 +1,10 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse, HttpParams } from '@angular/common/http';
 import { Observable, throwError, BehaviorSubject, of } from 'rxjs';
-import { map, catchError, tap } from 'rxjs/operators';
+import { map, catchError, tap, switchMap } from 'rxjs/operators';
 import { environment } from '../../environments/environment.development';
 import { Producto, PageResponse, ProductoRequest, ProductoAdminResponse } from '../modelos/Producto';
+import { CategoriaService } from './categoria.service';
 
 @Injectable({
   providedIn: 'root'
@@ -15,7 +16,70 @@ export class ProductoService {
   // Cache local de productos para búsqueda y filtrado del lado del cliente
   private productosCache$ = new BehaviorSubject<Producto[]>([]);
   
-  constructor(private http: HttpClient) { }
+  // Cache de categorías para evitar llamadas repetidas
+  private categoriasCache: { id: number, nombre: string }[] = [];
+  
+  constructor(
+    private http: HttpClient,
+    private categoriaService: CategoriaService
+  ) { 
+    // Cargar categorías al inicio
+    this.cargarCategorias();
+  }
+
+  /**
+   * Cargar categorías en cache
+   */
+  private cargarCategorias(): void {
+    this.categoriaService.obtenerCategorias().subscribe({
+      next: (categorias) => {
+        this.categoriasCache = categorias.map(c => ({
+          id: typeof c.idCategoria === 'string' ? parseInt(c.idCategoria, 10) : c.idCategoria,
+          nombre: c.nombre
+        }));
+        console.log('Categorías cargadas en cache:', this.categoriasCache);
+      },
+      error: (error) => {
+        console.error('Error al cargar categorías:', error);
+      }
+    });
+  }
+
+  /**
+   * Obtener ID de categoría por nombre
+   */
+  private obtenerIdCategoriaPorNombre(nombreCategoria: string): Observable<number> {
+    // Si ya está en cache, devolverlo inmediatamente
+    const categoriaEnCache = this.categoriasCache.find(
+      c => c.nombre.toLowerCase() === nombreCategoria.toLowerCase()
+    );
+    
+    if (categoriaEnCache) {
+      return of(categoriaEnCache.id);
+    }
+    
+    // Si no está en cache, obtener desde el servicio
+    return this.categoriaService.obtenerCategorias().pipe(
+      map(categorias => {
+        const categoria = categorias.find(
+          c => c.nombre.toLowerCase() === nombreCategoria.toLowerCase()
+        );
+        
+        if (!categoria) {
+          throw new Error(`Categoría "${nombreCategoria}" no encontrada`);
+        }
+        
+        const id = typeof categoria.idCategoria === 'string' 
+          ? parseInt(categoria.idCategoria, 10) 
+          : categoria.idCategoria;
+        
+        // Actualizar cache
+        this.categoriasCache.push({ id, nombre: categoria.nombre });
+        
+        return id;
+      })
+    );
+  }
 
   /**
    * Obtener todos los productos del catálogo (activos)
@@ -278,8 +342,26 @@ export class ProductoService {
    * (requiere autenticación ADMIN)
    */
   cambiarEstadoProducto(uuid: string, activo: boolean): Observable<Producto> {
-    const url = `${environment.apiProductsUrl}/admin/products/${uuid}/estado`;
-    return this.http.patch<Producto>(url, { activo }).pipe(
+    // Primero obtenemos el producto completo
+    return this.obtenerProductoPorIdAdmin(uuid).pipe(
+      // Obtener ID de categoría y preparar request
+      switchMap(producto => {
+        return this.obtenerIdCategoriaPorNombre(producto.categoria).pipe(
+          map(categoriaId => ({
+            categoria: categoriaId,
+            nombre: producto.nombre,
+            descripcion: producto.descripcion,
+            precio: producto.precio,
+            stock: producto.stock,
+            energiaLunar: producto.energiaLunar,
+            imagen: producto.imagen
+          }))
+        );
+      }),
+      switchMap(updateRequest => {
+        const url = `${environment.apiProductsUrl}/admin/products/${uuid}`;
+        return this.http.patch<Producto>(url, updateRequest);
+      }),
       tap(() => {
         // Limpiar cache después de cambiar estado
         this.productosCache$.next([]);
@@ -290,10 +372,30 @@ export class ProductoService {
 
   /**
    * 📦 Actualizar stock de un producto (requiere autenticación ADMIN)
+   * CORREGIDO: Usa el endpoint general de actualización del producto
    */
   actualizarStock(uuid: string, nuevoStock: number): Observable<Producto> {
-    const url = `${environment.apiProductsUrl}/admin/products/${uuid}/stock`;
-    return this.http.patch<Producto>(url, { stock: nuevoStock }).pipe(
+    // Primero obtenemos el producto completo
+    return this.obtenerProductoPorIdAdmin(uuid).pipe(
+      // Luego actualizamos solo el stock usando el endpoint general de actualización
+      switchMap(producto => {
+        // Obtener el ID de categoría desde el servicio de categorías
+        return this.obtenerIdCategoriaPorNombre(producto.categoria).pipe(
+          map(categoriaId => ({
+            categoria: categoriaId,
+            nombre: producto.nombre,
+            descripcion: producto.descripcion,
+            precio: producto.precio,
+            stock: nuevoStock, // Solo cambiamos el stock
+            energiaLunar: producto.energiaLunar,
+            imagen: producto.imagen
+          }))
+        );
+      }),
+      switchMap(updateRequest => {
+        const url = `${environment.apiProductsUrl}/admin/products/${uuid}`;
+        return this.http.patch<Producto>(url, updateRequest);
+      }),
       tap(() => {
         // Limpiar cache después de actualizar stock
         this.productosCache$.next([]);
