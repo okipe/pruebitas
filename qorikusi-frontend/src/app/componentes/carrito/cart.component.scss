@@ -23,18 +23,18 @@
 .empty-cart {
   text-align: center;
   padding: 100px 20px;
-  
+
   i {
     color: #d0d0d0;
   }
-  
+
   h3 {
     font-size: 1.8rem;
     color: #2d2d2d;
     margin-bottom: 15px;
     font-weight: 300;
   }
-  
+
   p {
     font-size: 1.1rem;
     color: #5a5a5a;
@@ -52,6 +52,12 @@
   letter-spacing: 2px;
   color: #2d2d2d;
   text-transform: uppercase;
+  display: flex;
+  align-items: center;
+
+  i {
+    color: #3d3d5c;
+  }
 }
 
 /* ========================================
@@ -69,13 +75,18 @@
   padding: 25px;
   border-bottom: 1px solid #e0e0e0;
   transition: background-color 0.3s ease;
-  
+
   &:last-child {
     border-bottom: none;
   }
-  
+
   &:hover {
     background-color: #f9f9f9;
+  }
+
+  &.out-of-stock {
+    background-color: #fff5f5;
+    opacity: 0.8;
   }
 }
 
@@ -83,7 +94,8 @@
   border-radius: 6px;
   overflow: hidden;
   border: 1px solid #e0e0e0;
-  
+  background-color: #f5f3f0;
+
   img {
     width: 100%;
     height: auto;
@@ -95,6 +107,14 @@
   font-size: 1.1rem;
   font-weight: 500;
   color: #2d2d2d;
+  margin-bottom: 5px;
+}
+
+.item-category {
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  color: #999;
+  letter-spacing: 0.5px;
   margin-bottom: 8px;
 }
 
@@ -102,13 +122,32 @@
   font-size: 1rem;
   font-weight: 600;
   color: #3d3d5c;
-  margin-bottom: 5px;
+  margin-bottom: 8px;
 }
 
-.item-specs {
+/* Stock Alerts */
+.stock-alert {
   font-size: 0.85rem;
-  color: #777;
-  margin: 0;
+  color: #dc3545;
+  background-color: #f8d7da;
+  border: 1px solid #f5c6cb;
+  padding: 5px 10px;
+  border-radius: 4px;
+  display: inline-flex;
+  align-items: center;
+  margin-top: 5px;
+}
+
+.stock-warning {
+  font-size: 0.85rem;
+  color: #856404;
+  background-color: #fff3cd;
+  border: 1px solid #ffeaa7;
+  padding: 5px 10px;
+  border-radius: 4px;
+  display: inline-flex;
+  align-items: center;
+  margin-top: 5px;
 }
 
 .item-subtotal {
@@ -141,18 +180,18 @@
   cursor: pointer;
   transition: all 0.3s ease;
   color: #5a5a5a;
-  
+
   &:hover:not(:disabled) {
     background-color: #3d3d5c;
     color: #fff;
     border-color: #3d3d5c;
   }
-  
+
   &:disabled {
     opacity: 0.4;
     cursor: not-allowed;
   }
-  
+
   i {
     font-size: 0.75rem;
   }
@@ -166,20 +205,28 @@
   padding: 8px 5px;
   font-weight: 600;
   color: #2d2d2d;
-  
+
   &:focus {
     outline: none;
     border-color: #3d3d5c;
   }
-  
+
   /* Remove arrows from number input */
   &::-webkit-outer-spin-button,
   &::-webkit-inner-spin-button {
     -webkit-appearance: none;
     margin: 0;
   }
-  
+
   -moz-appearance: textfield;
+}
+
+.quantity-hint {
+  display: block;
+  text-align: center;
+  font-size: 0.75rem;
+  color: #999;
+  margin-top: 5px;
 }
 
 /* ========================================
@@ -194,9 +241,23 @@
   cursor: pointer;
   transition: color 0.3s ease;
   padding: 8px;
-  
+
   &:hover {
     color: #dc3545;
+  }
+}
+
+/* ========================================
+   CART ACTIONS
+   ======================================== */
+
+.cart-actions {
+  display: flex;
+  justify-content: space-between;
+  gap: 15px;
+
+  .btn {
+    padding: 12px 25px;
   }
 }
 
@@ -233,7 +294,7 @@
   margin-bottom: 15px;
   font-size: 1rem;
   color: #5a5a5a;
-  
+
   span:last-child {
     font-weight: 600;
     color: #2d2d2d;
@@ -243,11 +304,12 @@
 .summary-total {
   font-size: 1.3rem;
   color: #2d2d2d;
-  
+  padding-top: 15px;
+
   span {
     font-weight: 700;
   }
-  
+
   span:last-child {
     color: #3d3d5c;
   }
@@ -259,24 +321,39 @@
   margin: 20px 0;
 }
 
+/* Free Shipping Alert */
 .free-shipping-alert {
   background-color: #fff3cd;
   border: 1px solid #ffc107;
   border-radius: 6px;
-  padding: 12px;
+  padding: 15px;
   font-size: 0.9rem;
   color: #856404;
   margin-top: 15px;
-  display: flex;
-  align-items: center;
-  
+
   i {
     color: #ffc107;
   }
-  
+
   strong {
     color: #856404;
   }
+}
+
+.shipping-progress {
+  width: 100%;
+  height: 6px;
+  background-color: #ffeaa7;
+  border-radius: 3px;
+  margin-top: 10px;
+  overflow: hidden;
+}
+
+.shipping-progress-bar {
+  height: 100%;
+  background: linear-gradient(90deg, #ffc107 0%, #ffb300 100%);
+  transition: width 0.3s ease;
+  border-radius: 3px;
 }
 
 /* ========================================
@@ -287,6 +364,27 @@
   margin-bottom: 25px;
 }
 
+/* Security Features */
+.security-features {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 20px;
+
+  .security-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 0.85rem;
+    color: #5a5a5a;
+
+    i {
+      color: #28a745;
+      font-size: 1rem;
+    }
+  }
+}
+
 /* ========================================
    PAYMENT METHODS
    ======================================== */
@@ -295,23 +393,23 @@
   text-align: center;
   border-top: 1px solid #e0e0e0;
   padding-top: 20px;
-  
+
   .payment-title {
     font-size: 0.9rem;
     color: #777;
     margin-bottom: 10px;
   }
-  
+
   .payment-icons {
     display: flex;
     justify-content: center;
     gap: 15px;
-    
+
     i {
       font-size: 2rem;
       color: #5a5a5a;
       transition: color 0.3s ease;
-      
+
       &:hover {
         color: #3d3d5c;
       }
@@ -332,7 +430,10 @@
   font-weight: 600;
   letter-spacing: 1px;
   transition: all 0.3s ease;
-  
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
   &:hover {
     background-color: #d4af37;
     color: #3d3d5c;
@@ -349,9 +450,25 @@
   font-weight: 600;
   letter-spacing: 1px;
   transition: all 0.3s ease;
-  
+
   &:hover {
     background-color: #3d3d5c;
+    color: #ffffff;
+  }
+}
+
+.btn-outline-danger {
+  background-color: transparent;
+  color: #dc3545;
+  border: 2px solid #dc3545;
+  padding: 12px 30px;
+  border-radius: 6px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  transition: all 0.3s ease;
+
+  &:hover {
+    background-color: #dc3545;
     color: #ffffff;
   }
 }
@@ -370,28 +487,40 @@
 @media (max-width: 768px) {
   .cart-title {
     font-size: 1.5rem;
+
+    i {
+      font-size: 1.3rem;
+    }
   }
-  
+
   .cart-item {
     padding: 20px 15px;
   }
-  
+
   .item-name {
     font-size: 1rem;
   }
-  
+
   .quantity-control {
     justify-content: flex-start;
     margin-top: 10px;
   }
-  
+
   .item-subtotal {
     font-size: 1rem;
     margin-top: 10px;
   }
-  
+
   .btn-remove {
     margin-top: 10px;
+  }
+
+  .cart-actions {
+    flex-direction: column;
+
+    .btn {
+      width: 100%;
+    }
   }
 }
 
@@ -399,11 +528,11 @@
   .cart-summary {
     padding: 20px;
   }
-  
+
   .summary-title {
     font-size: 1.1rem;
   }
-  
+
   .payment-icons i {
     font-size: 1.5rem;
   }

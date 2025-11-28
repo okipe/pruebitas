@@ -1,4 +1,11 @@
 import { Routes } from '@angular/router';
+import { AdminDashboardComponent } from './componentes/admin/dashboard/admin-dashboard.component';
+import { ProductAdminListComponent } from './componentes/admin/products/product-admin-list.component';
+import { ProductFormComponent } from './componentes/admin/product-form/product-form.component';
+import { HomeComponent } from './componentes/home/home.component';
+import { ProductListComponent } from './componentes/producto/listar-producto/product-list.component';
+import { ProductDetailComponent } from './componentes/producto/detalle-producto/product-detail.component';
+import { CartComponent } from './componentes/carrito/cart.component';
 import { authGuard } from './guards/auth.guard';
 
 export const routes: Routes = [
@@ -72,6 +79,27 @@ export const routes: Routes = [
         (m) => m.OrdersComponent
       ),
     canActivate: [authGuard],
+  },
+  {
+    path: 'admin',
+    children: [
+      {
+        path: '',
+        component: AdminDashboardComponent,
+      },
+      {
+        path: 'products',
+        component: ProductAdminListComponent,
+      },
+      {
+        path: 'products/new',
+        component: ProductFormComponent,
+      },
+      {
+        path: 'products/edit/:id',
+        component: ProductFormComponent,
+      },
+    ],
   },
   {
     path: '**',

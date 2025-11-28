@@ -12,38 +12,98 @@
       <aside class="col-lg-3 col-md-4 mb-4">
         <div class="filters-section">
           
-          <!-- Filtro por Material -->
+          <!-- Header de filtros -->
+          <div class="filters-header">
+            <h5 class="filter-title mb-3">FILTROS</h5>
+            <button 
+              class="btn btn-sm btn-outline-secondary" 
+              (click)="limpiarFiltros()"
+              *ngIf="terminoBusqueda || categoriaSeleccionada || energiaLunarSeleccionada || precioMin || precioMax"
+            >
+              <i class="fas fa-times me-1"></i> Limpiar
+            </button>
+          </div>
+
+          <!-- Búsqueda -->
           <div class="filter-group">
-            <h5 class="filter-title">Material</h5>
+            <h5 class="filter-title">Buscar</h5>
+            <div class="search-box">
+              <input 
+                type="text" 
+                class="form-control" 
+                placeholder="Buscar productos..."
+                [(ngModel)]="terminoBusqueda"
+                (ngModelChange)="onBusquedaChange()"
+              >
+              <i class="fas fa-search search-icon"></i>
+            </div>
+          </div>
+
+          <!-- Filtro por Categoría -->
+          <div class="filter-group">
+            <h5 class="filter-title">Categoría</h5>
             <div class="filter-options">
-              <div class="form-check" *ngFor="let material of materials">
+              <div class="form-check">
                 <input 
                   class="form-check-input" 
-                  type="checkbox" 
-                  [id]="'material-' + material.id"
-                  [checked]="material.checked"
-                  (change)="onFilterChange()"
+                  type="radio" 
+                  name="categoria"
+                  id="categoria-todas"
+                  [value]="''"
+                  [(ngModel)]="categoriaSeleccionada"
+                  (change)="onCategoriaChange()"
                 >
-                <label class="form-check-label" [for]="'material-' + material.id">
-                  {{ material.name }} <span class="count">({{ material.count }})</span>
+                <label class="form-check-label" for="categoria-todas">
+                  Todas las categorías
+                </label>
+              </div>
+              <div class="form-check" *ngFor="let categoria of categorias">
+                <input 
+                  class="form-check-input" 
+                  type="radio" 
+                  name="categoria"
+                  [id]="'categoria-' + categoria"
+                  [value]="categoria"
+                  [(ngModel)]="categoriaSeleccionada"
+                  (change)="onCategoriaChange()"
+                >
+                <label class="form-check-label" [for]="'categoria-' + categoria">
+                  {{ categoria }}
                 </label>
               </div>
             </div>
           </div>
 
-          <!-- Filtro por Detalles -->
-          <div class="filter-group">
-            <h5 class="filter-title">Detalles</h5>
+          <!-- Filtro por Energía Lunar -->
+          <div class="filter-group" *ngIf="energiasLunares.length > 0">
+            <h5 class="filter-title">Energía Lunar</h5>
             <div class="filter-options">
-              <div class="form-check" *ngFor="let detail of details">
+              <div class="form-check">
                 <input 
                   class="form-check-input" 
-                  type="checkbox" 
-                  [id]="'detail-' + detail.id"
-                  (change)="onFilterChange()"
+                  type="radio" 
+                  name="energiaLunar"
+                  id="energia-todas"
+                  [value]="''"
+                  [(ngModel)]="energiaLunarSeleccionada"
+                  (change)="onEnergiaLunarChange()"
                 >
-                <label class="form-check-label" [for]="'detail-' + detail.id">
-                  {{ detail.name }}
+                <label class="form-check-label" for="energia-todas">
+                  Todas
+                </label>
+              </div>
+              <div class="form-check" *ngFor="let energia of energiasLunares">
+                <input 
+                  class="form-check-input" 
+                  type="radio" 
+                  name="energiaLunar"
+                  [id]="'energia-' + energia"
+                  [value]="energia"
+                  [(ngModel)]="energiaLunarSeleccionada"
+                  (change)="onEnergiaLunarChange()"
+                >
+                <label class="form-check-label" [for]="'energia-' + energia">
+                  {{ energia }}
                 </label>
               </div>
             </div>
@@ -51,23 +111,27 @@
 
           <!-- Filtro por Precio -->
           <div class="filter-group">
-            <h5 class="filter-title">Precio</h5>
+            <h5 class="filter-title">Rango de Precio</h5>
             <div class="price-range">
               <div class="row g-2">
                 <div class="col-6">
                   <input 
                     type="number" 
                     class="form-control form-control-sm" 
-                    placeholder="S/. 0"
-                    [(ngModel)]="priceMin"
+                    placeholder="S/. Mín"
+                    [(ngModel)]="precioMin"
+                    (ngModelChange)="onPrecioChange()"
+                    min="0"
                   >
                 </div>
                 <div class="col-6">
                   <input 
                     type="number" 
                     class="form-control form-control-sm" 
-                    placeholder="S/. 2900"
-                    [(ngModel)]="priceMax"
+                    placeholder="S/. Máx"
+                    [(ngModel)]="precioMax"
+                    (ngModelChange)="onPrecioChange()"
+                    min="0"
                   >
                 </div>
               </div>
@@ -80,87 +144,192 @@
       <!-- Productos Grid -->
       <main class="col-lg-9 col-md-8">
         
-        <!-- Header del Catálogo -->
-        <div class="catalog-header mb-4">
-          <div class="row align-items-center">
-            <div class="col-md-6">
-              <h1 class="catalog-title">COLLARES</h1>
-            </div>
-            <div class="col-md-6 text-end">
-              <div class="catalog-controls">
-                <!-- Vista Grid/List -->
-                <div class="view-toggle me-3">
-                  <button 
-                    class="btn-view" 
-                    [class.active]="viewMode === 'grid'"
-                    (click)="viewMode = 'grid'"
-                  >
-                    <i class="fas fa-th"></i>
-                  </button>
-                  <button 
-                    class="btn-view" 
-                    [class.active]="viewMode === 'list'"
-                    (click)="viewMode = 'list'"
-                  >
-                    <i class="fas fa-list"></i>
-                  </button>
-                </div>
+        <!-- Loader -->
+        <div *ngIf="loading" class="text-center py-5">
+          <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Cargando...</span>
+          </div>
+          <p class="mt-3">Cargando productos...</p>
+        </div>
 
-                <!-- Ordenar -->
-                <select class="form-select form-select-sm" [(ngModel)]="sortBy" (change)="onSortChange()">
-                  <option value="">Tipo</option>
-                  <option value="price-asc">Precio: Menor a Mayor</option>
-                  <option value="price-desc">Precio: Mayor a Menor</option>
-                  <option value="name">Nombre A-Z</option>
-                  <option value="newest">Más Recientes</option>
-                </select>
+        <!-- Error -->
+        <div *ngIf="error" class="alert alert-danger" role="alert">
+          <i class="fas fa-exclamation-circle me-2"></i>
+          {{ error }}
+          <button class="btn btn-sm btn-outline-danger ms-3" (click)="cargarProductos()">
+            Reintentar
+          </button>
+        </div>
+
+        <!-- Contenido principal -->
+        <div *ngIf="!loading && !error">
+          
+          <!-- Header del Catálogo -->
+          <div class="catalog-header mb-4">
+            <div class="row align-items-center">
+              <div class="col-md-6">
+                <h1 class="catalog-title">CATÁLOGO</h1>
+                <p class="catalog-subtitle mb-0">{{ rangoProductos }}</p>
+              </div>
+              <div class="col-md-6">
+                <div class="catalog-controls">
+                  <!-- Vista Grid/List -->
+                  <div class="view-toggle me-3">
+                    <button 
+                      class="btn-view" 
+                      [class.active]="viewMode === 'grid'"
+                      (click)="cambiarVista('grid')"
+                      aria-label="Vista de cuadrícula"
+                    >
+                      <i class="fas fa-th"></i>
+                    </button>
+                    <button 
+                      class="btn-view" 
+                      [class.active]="viewMode === 'list'"
+                      (click)="cambiarVista('list')"
+                      aria-label="Vista de lista"
+                    >
+                      <i class="fas fa-list"></i>
+                    </button>
+                  </div>
+
+                  <!-- Ordenar -->
+                  <select 
+                    class="form-select form-select-sm" 
+                    [(ngModel)]="sortBy" 
+                    (change)="onSortChange()"
+                  >
+                    <option value="">Ordenar por...</option>
+                    <option value="price-asc">Precio: Menor a Mayor</option>
+                    <option value="price-desc">Precio: Mayor a Menor</option>
+                    <option value="name-asc">Nombre: A-Z</option>
+                    <option value="name-desc">Nombre: Z-A</option>
+                  </select>
+                </div>
               </div>
             </div>
           </div>
-        </div>
 
-        <!-- Grid de Productos -->
-        <div class="products-grid" [class.list-view]="viewMode === 'list'">
-          <div 
-            class="product-card-wrapper" 
-            *ngFor="let product of filteredProducts"
-          >
-            <div class="product-card" [routerLink]="['/products', product.id]" style="cursor: pointer;">
-              <div class="product-image">
-                <img [src]="product.imagen" [alt]="product.nombre" class="img-fluid">
-                <div class="product-overlay">
-                  <button class="btn btn-quick-view" (click)="$event.stopPropagation()">Vista Rápida</button>
+          <!-- Grid de Productos -->
+          <div class="products-grid" [class.list-view]="viewMode === 'list'">
+            <div 
+              class="product-card-wrapper" 
+              *ngFor="let product of productosPaginados"
+            >
+              <div 
+                class="product-card" 
+                [routerLink]="['/products', product.uuidProducto]"
+                style="cursor: pointer;"
+              >
+                <div class="product-image">
+                  <img 
+                    [src]="product.imagen || 'assets/images/placeholder-product.jpg'" 
+                    [alt]="product.nombre" 
+                    class="img-fluid"
+                    (error)="$any($event.target).src='assets/images/placeholder-product.jpg'"
+                  >
+                  <div class="product-overlay">
+                    <button 
+                      class="btn btn-quick-view" 
+                      (click)="$event.stopPropagation()"
+                    >
+                      Vista Rápida
+                    </button>
+                  </div>
+                  
+                  <!-- Badge de stock bajo -->
+                  <span class="badge-stock" *ngIf="product.stock < 5 && product.stock > 0">
+                    ¡Últimas {{ product.stock }} unidades!
+                  </span>
+                  
+                  <!-- Badge sin stock -->
+                  <span class="badge-no-stock" *ngIf="product.stock === 0">
+                    Agotado
+                  </span>
                 </div>
-              </div>
-              <div class="product-info">
-                <h5 class="product-name">{{ product.nombre }}</h5>
-                <p class="product-price">s/. {{ product.precio | number:'1.2-2' }}</p>
+                
+                <div class="product-info">
+                  <p class="product-category" *ngIf="product.categoria">
+                    {{ product.categoria }}
+                  </p>
+                  <h5 class="product-name">{{ product.nombre }}</h5>
+                  <p class="product-price">s/. {{ product.precio | number:'1.2-2' }}</p>
+                  
+                  <!-- Energía lunar -->
+                  <p class="product-lunar" *ngIf="product.energiaLunar">
+                    <i class="fas fa-moon me-1"></i>
+                    {{ product.energiaLunar }}
+                  </p>
+                </div>
               </div>
             </div>
           </div>
-          <!-- <div 
-            class="product-card-wrapper" 
-            *ngFor="let product of filteredProducts"
-          >
-            <div class="product-card">
-              <div class="product-image">
-                <img [src]="product.imagen" [alt]="product.nombre" class="img-fluid">
-                <div class="product-overlay">
-                  <button class="btn btn-quick-view">Vista Rápida</button>
-                </div>
-              </div>
-              <div class="product-info">
-                <h5 class="product-name">{{ product.nombre }}</h5>
-                <p class="product-price">s/. {{ product.precio | number:'1.2-2' }}</p>
-              </div>
-            </div>
-          </div> -->
-        </div>
 
-        <!-- Mensaje si no hay productos -->
-        <div *ngIf="filteredProducts.length === 0" class="no-products">
-          <i class="fas fa-search fa-3x mb-3"></i>
-          <p>No se encontraron productos con los filtros seleccionados.</p>
+          <!-- Mensaje si no hay productos -->
+          <div *ngIf="filteredProducts.length === 0" class="no-products">
+            <i class="fas fa-search fa-3x mb-3"></i>
+            <p>No se encontraron productos con los filtros seleccionados.</p>
+            <button class="btn btn-primary-custom" (click)="limpiarFiltros()">
+              Limpiar filtros
+            </button>
+          </div>
+
+          <!-- Paginación -->
+          <nav 
+            class="pagination-container" 
+            *ngIf="filteredProducts.length > productosPorPagina"
+          >
+            <ul class="pagination justify-content-center">
+              
+              <!-- Botón anterior -->
+              <li class="page-item" [class.disabled]="paginaActual === 1">
+                <a 
+                  class="page-link" 
+                  (click)="cambiarPagina(paginaActual - 1)"
+                  tabindex="-1"
+                >
+                  <i class="fas fa-chevron-left"></i>
+                </a>
+              </li>
+
+              <!-- Primera página si no está visible -->
+              <li class="page-item" *ngIf="paginasArray[0] > 1">
+                <a class="page-link" (click)="cambiarPagina(1)">1</a>
+              </li>
+              <li class="page-item disabled" *ngIf="paginasArray[0] > 2">
+                <span class="page-link">...</span>
+              </li>
+
+              <!-- Números de página -->
+              <li 
+                class="page-item" 
+                *ngFor="let pagina of paginasArray"
+                [class.active]="pagina === paginaActual"
+              >
+                <a class="page-link" (click)="cambiarPagina(pagina)">
+                  {{ pagina }}
+                </a>
+              </li>
+
+              <!-- Última página si no está visible -->
+              <li class="page-item disabled" *ngIf="paginasArray[paginasArray.length - 1] < totalPaginas - 1">
+                <span class="page-link">...</span>
+              </li>
+              <li class="page-item" *ngIf="paginasArray[paginasArray.length - 1] < totalPaginas">
+                <a class="page-link" (click)="cambiarPagina(totalPaginas)">
+                  {{ totalPaginas }}
+                </a>
+              </li>
+
+              <!-- Botón siguiente -->
+              <li class="page-item" [class.disabled]="paginaActual === totalPaginas">
+                <a class="page-link" (click)="cambiarPagina(paginaActual + 1)">
+                  <i class="fas fa-chevron-right"></i>
+                </a>
+              </li>
+            </ul>
+          </nav>
+
         </div>
 
       </main>

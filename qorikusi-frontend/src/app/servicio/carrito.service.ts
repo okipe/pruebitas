@@ -22,7 +22,9 @@ export class CarritoService {
   }
 
   agregarProducto(producto: Producto, cantidad: number = 1): void {
-    const itemExistente = this.items.find(item => item.producto.id === producto.id);
+    const itemExistente = this.items.find(
+      item => item.producto.uuidProducto === producto.uuidProducto
+    );
     
     if (itemExistente) {
       itemExistente.cantidad += cantidad;
@@ -33,16 +35,21 @@ export class CarritoService {
     this.actualizarCarrito();
   }
 
-  actualizarCantidad(productoId: number, cantidad: number): void {
-    const item = this.items.find(item => item.producto.id === productoId);
+  actualizarCantidad(productoUuid: string, cantidad: number): void {
+    const item = this.items.find(
+      item => item.producto.uuidProducto === productoUuid
+    );
+    
     if (item) {
       item.cantidad = cantidad;
       this.actualizarCarrito();
     }
   }
 
-  eliminarProducto(productoId: number): void {
-    this.items = this.items.filter(item => item.producto.id !== productoId);
+  eliminarProducto(productoUuid: string): void {
+    this.items = this.items.filter(
+      item => item.producto.uuidProducto !== productoUuid
+    );
     this.actualizarCarrito();
   }
 
@@ -59,6 +66,23 @@ export class CarritoService {
     return this.items.reduce((total, item) => 
       total + (item.producto.precio * item.cantidad), 0
     );
+  }
+
+  /**
+   * Verificar si un producto está en el carrito
+   */
+  estaEnCarrito(productoUuid: string): boolean {
+    return this.items.some(item => item.producto.uuidProducto === productoUuid);
+  }
+
+  /**
+   * Obtener la cantidad de un producto en el carrito
+   */
+  obtenerCantidadProducto(productoUuid: string): number {
+    const item = this.items.find(
+      item => item.producto.uuidProducto === productoUuid
+    );
+    return item ? item.cantidad : 0;
   }
 
   private guardarCarrito(): void {
