@@ -52,7 +52,18 @@ export interface ProductoRequest {
   imagen: string;
 }
 
-// Modelo para la respuesta del admin (incluye estado)
+// CORREGIDO: Modelo para la respuesta del admin
+// El backend envía "estado" como STRING ("Activo" o "Inactivo")
+// pero necesitamos convertirlo a boolean en el frontend
 export interface ProductoAdminResponse extends Producto {
-  estado: boolean; // true = activo, false = inactivo
+  estado: boolean; // En el frontend lo manejamos como boolean
+}
+
+// Función helper para convertir la respuesta del backend
+export function convertirProductoAdmin(productoBackend: any): ProductoAdminResponse {
+  return {
+    ...productoBackend,
+    // Convertir el string "Activo"/"Inactivo" a boolean
+    estado: productoBackend.estado === 'Activo' || productoBackend.estado === true
+  };
 }

@@ -39,8 +39,12 @@ export class ProductAdminListComponent implements OnInit {
 
     this.productoService.obtenerProductosAdmin().subscribe({
       next: (response) => {
+        // Guardar TODOS los productos (activos e inactivos)
         this.productos = response.content;
+        
+        // Aplicar filtros (esto respetará el filtroEstado actual)
         this.aplicarFiltros();
+        
         this.loading = false;
       },
       error: (error) => {
@@ -64,12 +68,13 @@ export class ProductAdminListComponent implements OnInit {
       );
     }
 
-    // Filtro de estado
+    // Filtro de estado - CORREGIDO
     if (this.filtroEstado === 'activos') {
-      resultado = resultado.filter(p => p.estado);
+      resultado = resultado.filter(p => p.estado === true);
     } else if (this.filtroEstado === 'inactivos') {
-      resultado = resultado.filter(p => !p.estado);
+      resultado = resultado.filter(p => p.estado === false);
     }
+    // Si filtroEstado === 'todos', no filtramos por estado
 
     this.productosFiltrados = resultado;
   }
@@ -79,6 +84,7 @@ export class ProductAdminListComponent implements OnInit {
   }
 
   onFiltroEstadoChange() {
+    console.log('Filtro de estado cambiado a:', this.filtroEstado);
     this.aplicarFiltros();
   }
 
@@ -87,14 +93,21 @@ export class ProductAdminListComponent implements OnInit {
     const accion = nuevoEstado ? 'activar' : 'desactivar';
     
     if (confirm(`¿Estás seguro de que deseas ${accion} el producto "${producto.nombre}"?`)) {
-      this.productoService.cambiarEstadoProducto(producto.uuidProducto, nuevoEstado).subscribe({
+      console.log(`🔄 Cambiando estado de producto ${producto.nombre} a ${nuevoEstado}`);
+      
+      // ✅ CORREGIDO: Usar actualizarEstadoProducto en lugar de cambiarEstadoProducto
+      this.productoService.actualizarEstadoProducto(producto.uuidProducto, nuevoEstado).subscribe({
         next: () => {
-          producto.estado = nuevoEstado;
+          console.log(`✅ Estado cambiado exitosamente a ${nuevoEstado}`);
+          
+          // Recargar productos para asegurar sincronización con el backend
+          this.cargarProductos();
+          
           alert(`Producto ${nuevoEstado ? 'activado' : 'desactivado'} correctamente`);
         },
         error: (error) => {
-          console.error('Error al cambiar estado:', error);
-          alert('No se pudo cambiar el estado del producto');
+          console.error('❌ Error al cambiar estado:', error);
+          alert('No se pudo cambiar el estado del producto: ' + error.message);
         }
       });
     }
@@ -115,9 +128,12 @@ export class ProductAdminListComponent implements OnInit {
     
     this.productoService.eliminarProducto(producto.uuidProducto).subscribe({
       next: () => {
-        this.productos = this.productos.filter(p => p.uuidProducto !== producto.uuidProducto);
-        this.aplicarFiltros();
+        // Cerrar modal
         this.productoAEliminar = null;
+        
+        // Recargar productos desde el backend
+        this.cargarProductos();
+        
         alert(`Producto "${producto.nombre}" eliminado correctamente`);
       },
       error: (error) => {

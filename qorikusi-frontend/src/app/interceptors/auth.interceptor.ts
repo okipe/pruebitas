@@ -4,23 +4,29 @@ import { HttpInterceptorFn } from '@angular/common/http';
  * HTTP Interceptor para agregar el token JWT a las peticiones
  * 
  * Este interceptor agrega automáticamente el header Authorization con el token
- * a todas las peticiones que vayan a endpoints protegidos (/admin/ o /customer/)
+ * a TODAS las peticiones protegidas
  */
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
   // Obtener el token del localStorage
-  // Nota: Ajusta 'token' si usas otra key (ej: 'auth_token', 'jwt_token', etc.)
   const token = localStorage.getItem('token');
   
-  // Verificar si la petición es a un endpoint que requiere autenticación
-  const requiresAuth = req.url.includes('/admin/') || 
-                       req.url.includes('/customer/') ||
-                       req.url.includes('/auth/profile'); // Ajusta según tus endpoints
+  // Lista de patrones de URL que NO deben llevar token (públicos)
+  const isPublic = 
+    req.url.includes('/auth/login') ||
+    req.url.includes('/auth/register') ||
+    req.url.includes('/auth/forgot-password') ||
+    req.url.includes('/catalog/');  // Solo catálogo público
   
-  // Si hay token y la petición requiere auth, agregar el header
-  if (token && requiresAuth) {
+  // Si la ruta es pública, NO agregar token
+  if (isPublic) {
+    console.log('🌍 Ruta pública (sin token):', req.url);
+    return next(req);
+  }
+  
+  // Para TODAS las demás rutas, si hay token, agregarlo
+  if (token) {
     console.log('🔒 Agregando token a la petición:', req.url);
     
-    // Clonar la petición y agregar el header Authorization
     const clonedReq = req.clone({
       setHeaders: {
         Authorization: `Bearer ${token}`
@@ -30,6 +36,7 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
     return next(clonedReq);
   }
   
-  // Si no hay token o no es un endpoint protegido, continuar sin cambios
+  // Si no hay token en una ruta protegida
+  console.log('⚠️ Petición sin token:', req.url);
   return next(req);
 };

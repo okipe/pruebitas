@@ -21,7 +21,7 @@ public class ProductoController {
     private final ProductoService productoService;
 
     @PostMapping
-    public ResponseEntity<ProductoResponse> crearDireccion(@Valid @RequestBody ProductoRequest request) {
+    public ResponseEntity<ProductoResponse> crearProducto(@Valid @RequestBody ProductoRequest request) {
         ProductoResponse productoResponse = productoService.crearProducto(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(productoResponse);
     }
@@ -44,9 +44,23 @@ public class ProductoController {
         return ResponseEntity.ok(productoResponse);
     }
 
+    /**
+     * Eliminar (desactivar) un producto
+     * Cambia el estado del producto a false (inactivo)
+     */
     @DeleteMapping("/{uuidProducto}")
     public ResponseEntity<Void> eliminarProducto(@PathVariable UUID uuidProducto) {
         productoService.eliminarProducto(uuidProducto);
         return ResponseEntity.noContent().build();
+    }
+
+    /**
+     * NUEVO: Activar un producto (cambiar estado a true)
+     * Este endpoint permite reactivar productos que fueron desactivados
+     */
+    @PatchMapping("/{uuidProducto}/activate")
+    public ResponseEntity<ProductoResponse> activarProducto(@PathVariable UUID uuidProducto) {
+        ProductoResponse productoResponse = productoService.activarProducto(uuidProducto);
+        return ResponseEntity.ok(productoResponse);
     }
 }

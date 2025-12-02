@@ -15,6 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -34,9 +35,12 @@ public class ProductoServiceImpl implements ProductoService {
     }
 
     @Override
+    @Transactional
     public ProductoResponse crearProducto(ProductoRequest request) {
         Producto productoSave = productoMapper.createProductoFromRequest(request, categoriaRepository);
-        return productoMapper.toProductoResponse(productoRepository.save(productoSave));
+        Producto productoGuardado = productoRepository.save(productoSave);
+        log.info("Producto creado con UUID: {} y estado: {}", productoGuardado.getUuidProducto(), productoGuardado.isEstado());
+        return productoMapper.toProductoResponse(productoGuardado);
     }
 
     @Override
@@ -68,18 +72,63 @@ public class ProductoServiceImpl implements ProductoService {
     }
 
     @Override
+    @Transactional
     public ProductoResponse actualizarProducto(UUID uuidProducto, ProductoRequest request) {
         Producto producto = productoRepository.findByUuidProducto(uuidProducto)
                 .orElseThrow(ProductoServiceImpl::productNotFoundException);
+
+        log.info("Actualizando producto UUID: {} - Estado actual: {}", uuidProducto, producto.isEstado());
+
         productoMapper.updateProductoFromRequest(request, producto, categoriaRepository);
-        return productoMapper.toProductoResponse(productoRepository.save(producto));
+        Producto productoActualizado = productoRepository.save(producto);
+
+        log.info("Producto actualizado UUID: {} - Nuevo estado: {}", uuidProducto, productoActualizado.isEstado());
+
+        return productoMapper.toProductoResponse(productoActualizado);
     }
 
     @Override
+    @Transactional
     public void eliminarProducto(UUID uuidProducto) {
         Producto producto = productoRepository.findByUuidProducto(uuidProducto)
                 .orElseThrow(ProductoServiceImpl::productNotFoundException);
+
+        log.info("Eliminando (desactivando) producto UUID: {} - Estado actual: {}", uuidProducto, producto.isEstado());
+
         producto.setEstado(false);
-        productoRepository.save(producto);
+        Producto productoGuardado = productoRepository.save(producto);
+
+        log.info("Producto desactivado UUID: {} - Nuevo estado: {}", uuidProducto, productoGuardado.isEstado());
+
+        // Verificar que el cambio se haya guardado
+        Producto productoVerificado = productoRepository.findByUuidProducto(uuidProducto)
+                .orElseThrow(ProductoServiceImpl::productNotFoundException);
+
+        log.info("Verificación post-eliminación UUID: {} - Estado en BD: {}", uuidProducto, productoVerificado.isEstado());
+    }
+
+    /**
+     * NUEVO: Activar un producto (cambiar estado a true)
+     */
+    @Override
+    @Transactional
+    public ProductoResponse activarProducto(UUID uuidProducto) {
+        Producto producto = productoRepository.findByUuidProducto(uuidProducto)
+                .orElseThrow(ProductoServiceImpl::productNotFoundException);
+
+        log.info("Activando producto UUID: {} - Estado actual: {}", uuidProducto, producto.isEstado());
+
+        producto.setEstado(true);
+        Producto productoGuardado = productoRepository.save(producto);
+
+        log.info("Producto activado UUID: {} - Nuevo estado: {}", uuidProducto, productoGuardado.isEstado());
+
+        // Verificar que el cambio se haya guardado
+        Producto productoVerificado = productoRepository.findByUuidProducto(uuidProducto)
+                .orElseThrow(ProductoServiceImpl::productNotFoundException);
+
+        log.info("Verificación post-activación UUID: {} - Estado en BD: {}", uuidProducto, productoVerificado.isEstado());
+
+        return productoMapper.toProductoResponse(productoVerificado);
     }
 }

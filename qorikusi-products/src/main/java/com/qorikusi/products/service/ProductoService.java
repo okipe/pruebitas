@@ -23,4 +23,9 @@ public interface ProductoService {
     ProductoResponse actualizarProducto(UUID uuid, ProductoRequest request);
 
     void eliminarProducto(UUID uuid);
+
+    /**
+     * NUEVO: Activar un producto (cambiar estado a true)
+     */
+    ProductoResponse activarProducto(UUID uuid);
 }

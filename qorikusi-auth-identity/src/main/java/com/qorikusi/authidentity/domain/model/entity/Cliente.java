@@ -2,6 +2,7 @@ package com.qorikusi.authidentity.domain.model.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.PrePersist;
 import jakarta.persistence.PrimaryKeyJoinColumn;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -20,7 +21,7 @@ import java.util.UUID;
 public class Cliente extends Persona {
 
     @Column(columnDefinition = "BINARY(16)", nullable = false, unique = true)
-    private UUID uuidCliente = UUID.randomUUID();
+    private UUID uuidCliente;
 
     @Column(length = 150, nullable = false)
     private String correo;
@@ -34,4 +35,10 @@ public class Cliente extends Persona {
     @Column(nullable = false)
     private boolean estado;
 
+    @PrePersist
+    public void prePersist() {
+        if (uuidCliente == null) {
+            uuidCliente = UUID.randomUUID();
+        }
+    }
 }

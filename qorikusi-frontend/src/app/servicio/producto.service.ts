@@ -3,7 +3,7 @@ import { HttpClient, HttpErrorResponse, HttpParams } from '@angular/common/http'
 import { Observable, throwError, BehaviorSubject, of } from 'rxjs';
 import { map, catchError, tap, switchMap } from 'rxjs/operators';
 import { environment } from '../../environments/environment.development';
-import { Producto, PageResponse, ProductoRequest, ProductoAdminResponse } from '../modelos/Producto';
+import { Producto, PageResponse, ProductoRequest, ProductoAdminResponse, convertirProductoAdmin } from '../modelos/Producto';
 import { CategoriaService } from './categoria.service';
 
 @Injectable({
@@ -83,11 +83,10 @@ export class ProductoService {
 
   /**
    * Obtener todos los productos del catálogo (activos)
-   * Carga todos los productos de una vez para permitir búsqueda/filtrado del lado del cliente
    */
   obtenerProductos(categoria?: string): Observable<Producto[]> {
     let params = new HttpParams()
-      .set('size', '1000') // Cargar muchos productos a la vez
+      .set('size', '1000')
       .set('page', '0');
 
     if (categoria) {
@@ -98,7 +97,6 @@ export class ProductoService {
       .pipe(
         map(response => response.content),
         tap(productos => {
-          // Actualizar cache
           this.productosCache$.next(productos);
         }),
         catchError(this.handleError)
@@ -135,20 +133,18 @@ export class ProductoService {
 
   /**
    * 📋 Obtener un producto por su UUID desde el endpoint de admin
-   * (requiere autenticación ADMIN - para edición)
    */
   obtenerProductoPorIdAdmin(uuid: string): Observable<ProductoAdminResponse> {
     const url = `${environment.apiProductsUrl}/admin/products/${uuid}`;
-    return this.http.get<ProductoAdminResponse>(url)
+    return this.http.get<any>(url)
       .pipe(
+        map(producto => convertirProductoAdmin(producto)),
         catchError(this.handleError)
       );
   }
 
-  /**
-   * 🔍 BÚSQUEDA DEL LADO DEL CLIENTE
-   * Buscar productos por nombre (case-insensitive)
-   */
+  // ========== MÉTODOS DE FILTRADO (Del lado del cliente) ==========
+
   buscarProductos(termino: string, productos: Producto[]): Producto[] {
     if (!termino || termino.trim() === '') {
       return productos;
@@ -163,10 +159,6 @@ export class ProductoService {
     );
   }
 
-  /**
-   * 🎯 FILTRADO DEL LADO DEL CLIENTE
-   * Filtrar productos por categoría
-   */
   filtrarPorCategoria(productos: Producto[], categoria: string): Producto[] {
     if (!categoria || categoria === '') {
       return productos;
@@ -177,10 +169,6 @@ export class ProductoService {
     );
   }
 
-  /**
-   * 💰 FILTRADO DEL LADO DEL CLIENTE
-   * Filtrar productos por rango de precio
-   */
   filtrarPorPrecio(productos: Producto[], precioMin?: number, precioMax?: number): Producto[] {
     let resultado = [...productos];
 
@@ -195,10 +183,6 @@ export class ProductoService {
     return resultado;
   }
 
-  /**
-   * 🌙 FILTRADO DEL LADO DEL CLIENTE
-   * Filtrar productos por energía lunar
-   */
   filtrarPorEnergiaLunar(productos: Producto[], energia: string): Producto[] {
     if (!energia || energia === '') {
       return productos;
@@ -209,10 +193,6 @@ export class ProductoService {
     );
   }
 
-  /**
-   * 📊 ORDENAMIENTO DEL LADO DEL CLIENTE
-   * Ordenar productos según diferentes criterios
-   */
   ordenarProductos(productos: Producto[], criterio: string): Producto[] {
     const productosCopia = [...productos];
 
@@ -238,10 +218,6 @@ export class ProductoService {
     }
   }
 
-  /**
-   * 🔄 MÉTODO COMBINADO
-   * Aplicar todos los filtros y ordenamiento a la vez
-   */
   aplicarFiltrosYOrdenamiento(
     productos: Producto[],
     filtros: {
@@ -255,27 +231,22 @@ export class ProductoService {
   ): Producto[] {
     let resultado = [...productos];
 
-    // Aplicar búsqueda
     if (filtros.busqueda) {
       resultado = this.buscarProductos(filtros.busqueda, resultado);
     }
 
-    // Aplicar filtro de categoría
     if (filtros.categoria) {
       resultado = this.filtrarPorCategoria(resultado, filtros.categoria);
     }
 
-    // Aplicar filtro de precio
     if (filtros.precioMin !== undefined || filtros.precioMax !== undefined) {
       resultado = this.filtrarPorPrecio(resultado, filtros.precioMin, filtros.precioMax);
     }
 
-    // Aplicar filtro de energía lunar
     if (filtros.energiaLunar) {
       resultado = this.filtrarPorEnergiaLunar(resultado, filtros.energiaLunar);
     }
 
-    // Aplicar ordenamiento
     if (filtros.ordenamiento) {
       resultado = this.ordenarProductos(resultado, filtros.ordenamiento);
     }
@@ -283,9 +254,6 @@ export class ProductoService {
     return resultado;
   }
 
-  /**
-   * 📦 Obtener productos del cache
-   */
   obtenerProductosCache(): Observable<Producto[]> {
     return this.productosCache$.asObservable();
   }
@@ -295,13 +263,12 @@ export class ProductoService {
   // ====================================
 
   /**
-   * 📝 Crear un nuevo producto (requiere autenticación ADMIN)
+   * 📝 Crear un nuevo producto
    */
   crearProducto(producto: ProductoRequest): Observable<Producto> {
     const url = `${environment.apiProductsUrl}/admin/products`;
     return this.http.post<Producto>(url, producto).pipe(
       tap(() => {
-        // Limpiar cache después de crear
         this.productosCache$.next([]);
       }),
       catchError(this.handleError)
@@ -309,14 +276,12 @@ export class ProductoService {
   }
 
   /**
-   * ✏️ Actualizar un producto existente (requiere autenticación ADMIN)
-   * Usa PATCH según el endpoint del backend
+   * ✏️ Actualizar un producto existente
    */
   actualizarProducto(uuid: string, producto: ProductoRequest): Observable<Producto> {
     const url = `${environment.apiProductsUrl}/admin/products/${uuid}`;
-    return this.http.patch<Producto>(url, producto).pipe(  // PATCH es el método correcto
+    return this.http.patch<Producto>(url, producto).pipe(
       tap(() => {
-        // Limpiar cache después de actualizar
         this.productosCache$.next([]);
       }),
       catchError(this.handleError)
@@ -324,13 +289,14 @@ export class ProductoService {
   }
 
   /**
-   * 🗑️ Eliminar un producto (requiere autenticación ADMIN)
+   * 🗑️ Eliminar un producto (cambiar estado a inactivo)
    */
   eliminarProducto(uuid: string): Observable<void> {
     const url = `${environment.apiProductsUrl}/admin/products/${uuid}`;
+    console.log('🗑️ Eliminando producto:', uuid);
     return this.http.delete<void>(url).pipe(
       tap(() => {
-        // Limpiar cache después de eliminar
+        console.log('✅ Producto eliminado exitosamente');
         this.productosCache$.next([]);
       }),
       catchError(this.handleError)
@@ -338,55 +304,59 @@ export class ProductoService {
   }
 
   /**
-   * 🔄 Cambiar el estado de un producto (activo/inactivo)
-   * (requiere autenticación ADMIN)
+   * 🔄 NUEVO MÉTODO: Actualizar solo el estado de un producto
+   * Usa endpoints específicos según el nuevo estado:
+   * - Si nuevoEstado = false → DELETE /admin/products/{uuid} (desactivar)
+   * - Si nuevoEstado = true → PATCH /admin/products/{uuid}/activate (activar)
    */
-  cambiarEstadoProducto(uuid: string, activo: boolean): Observable<Producto> {
-    // Primero obtenemos el producto completo
-    return this.obtenerProductoPorIdAdmin(uuid).pipe(
-      // Obtener ID de categoría y preparar request
-      switchMap(producto => {
-        return this.obtenerIdCategoriaPorNombre(producto.categoria).pipe(
-          map(categoriaId => ({
-            categoria: categoriaId,
-            nombre: producto.nombre,
-            descripcion: producto.descripcion,
-            precio: producto.precio,
-            stock: producto.stock,
-            energiaLunar: producto.energiaLunar,
-            imagen: producto.imagen
-          }))
-        );
-      }),
-      switchMap(updateRequest => {
-        const url = `${environment.apiProductsUrl}/admin/products/${uuid}`;
-        return this.http.patch<Producto>(url, updateRequest);
-      }),
-      tap(() => {
-        // Limpiar cache después de cambiar estado
-        this.productosCache$.next([]);
-      }),
-      catchError(this.handleError)
-    );
+  actualizarEstadoProducto(uuid: string, nuevoEstado: boolean): Observable<Producto> {
+    console.log(`🔄 Actualizando estado del producto ${uuid} a ${nuevoEstado}`);
+    
+    if (nuevoEstado === false) {
+      // Desactivar producto usando el endpoint DELETE
+      console.log('🗑️ Usando endpoint DELETE para desactivar');
+      return this.eliminarProducto(uuid).pipe(
+        switchMap(() => this.obtenerProductoPorIdAdmin(uuid)),
+        tap(() => {
+          console.log(`✅ Producto desactivado exitosamente`);
+          this.productosCache$.next([]);
+        })
+      );
+    } else {
+      // Activar producto usando el nuevo endpoint /activate
+      const url = `${environment.apiProductsUrl}/admin/products/${uuid}/activate`;
+      console.log(`✅ Usando endpoint PATCH ${url} para activar`);
+      
+      return this.http.patch<any>(url, {}).pipe(
+        map(response => {
+          console.log(`✅ Respuesta del backend:`, response);
+          return convertirProductoAdmin(response);
+        }),
+        tap(() => {
+          console.log(`✅ Producto activado exitosamente`);
+          this.productosCache$.next([]);
+        }),
+        catchError(error => {
+          console.error(`❌ Error al activar producto:`, error);
+          return throwError(() => error);
+        })
+      );
+    }
   }
 
   /**
-   * 📦 Actualizar stock de un producto (requiere autenticación ADMIN)
-   * CORREGIDO: Usa el endpoint general de actualización del producto
+   * 📦 Actualizar stock de un producto
    */
   actualizarStock(uuid: string, nuevoStock: number): Observable<Producto> {
-    // Primero obtenemos el producto completo
     return this.obtenerProductoPorIdAdmin(uuid).pipe(
-      // Luego actualizamos solo el stock usando el endpoint general de actualización
       switchMap(producto => {
-        // Obtener el ID de categoría desde el servicio de categorías
         return this.obtenerIdCategoriaPorNombre(producto.categoria).pipe(
           map(categoriaId => ({
             categoria: categoriaId,
             nombre: producto.nombre,
             descripcion: producto.descripcion,
             precio: producto.precio,
-            stock: nuevoStock, // Solo cambiamos el stock
+            stock: nuevoStock,
             energiaLunar: producto.energiaLunar,
             imagen: producto.imagen
           }))
@@ -397,7 +367,6 @@ export class ProductoService {
         return this.http.patch<Producto>(url, updateRequest);
       }),
       tap(() => {
-        // Limpiar cache después de actualizar stock
         this.productosCache$.next([]);
       }),
       catchError(this.handleError)
@@ -405,8 +374,8 @@ export class ProductoService {
   }
 
   /**
-   * 📋 Obtener todos los productos para administración (incluye inactivos)
-   * (requiere autenticación ADMIN)
+   * 📋 Obtener todos los productos para administración
+   * CORREGIDO: Convierte el campo estado de string a boolean
    */
   obtenerProductosAdmin(page: number = 0, size: number = 1000): Observable<PageResponse<ProductoAdminResponse>> {
     const url = `${environment.apiProductsUrl}/admin/products`;
@@ -414,7 +383,23 @@ export class ProductoService {
       .set('page', page.toString())
       .set('size', size.toString());
     
-    return this.http.get<PageResponse<ProductoAdminResponse>>(url, { params }).pipe(
+    console.log('📦 Obteniendo productos admin desde:', url);
+    
+    return this.http.get<PageResponse<any>>(url, { params }).pipe(
+      map(response => {
+        console.log('📦 Respuesta del backend:', response);
+        
+        const productosConvertidos = response.content.map((producto: any) => {
+          const productoConvertido = convertirProductoAdmin(producto);
+          console.log(`Producto ${producto.nombre}: estado="${producto.estado}" → boolean=${productoConvertido.estado}`);
+          return productoConvertido;
+        });
+        
+        return {
+          ...response,
+          content: productosConvertidos
+        };
+      }),
       catchError(this.handleError)
     );
   }
@@ -423,13 +408,11 @@ export class ProductoService {
    * ⚠️ Manejo de errores HTTP
    */
   private handleError(error: HttpErrorResponse) {
-    let errorMessage = 'Ocurrió un error al obtener los productos';
+    let errorMessage = 'Ocurrió un error al procesar la solicitud';
 
     if (error.error instanceof ErrorEvent) {
-      // Error del lado del cliente
       errorMessage = `Error: ${error.error.message}`;
     } else {
-      // Error del lado del servidor
       const serverError = error.error;
       
       switch (serverError?.code) {
@@ -458,7 +441,7 @@ export class ProductoService {
       }
     }
 
-    console.error('Error en ProductoService:', errorMessage, error);
+    console.error('❌ Error en ProductoService:', errorMessage, error);
     return throwError(() => new Error(errorMessage));
   }
 }

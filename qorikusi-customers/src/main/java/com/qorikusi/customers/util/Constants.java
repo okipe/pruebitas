@@ -11,7 +11,7 @@ public class Constants {
     public final String INVALID_CREDENTIALS_ERROR_DESCRIPTION = "Credenciales inválidas";
     public final String EMAIL_REGEX = "^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$";
     public final String PASSWORD_REGEX = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[^A-Za-z0-9]).*$";
-    public final String LETTER_REGEX = "^[a-zA-Z ]+$";
+    public final String LETTER_REGEX = "^[a-zA-ZáéíóúÁÉÍÓÚñÑüÜ ]+$";
     public final String NUMBER_REGEX = "^[0-9]+$";
     public final String EMAIL_NOT_BLANK_MESSAGE_ERROR = "El correo es obligatorio";
     public final String EMAIL_PATTERN_MESSAGE_ERROR = "Formato de correo inválido";
