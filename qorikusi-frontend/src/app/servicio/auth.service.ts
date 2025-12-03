@@ -1,7 +1,9 @@
+// src/app/servicio/auth.service.ts
+
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Observable, BehaviorSubject, throwError } from 'rxjs';
-import { map, catchError, tap } from 'rxjs/operators';
+import { map, catchError, tap, switchMap } from 'rxjs/operators';
 import { environment } from '../../environments/environment.development';
 import { Usuario } from '../modelos/Usuario';
 import { 
@@ -11,6 +13,7 @@ import {
   ResetPasswordRequest 
 } from '../modelos/auth-requests';
 import { LoginResponse, ErrorResponse } from '../modelos/auth-responses';
+import { CarritoService } from './carrito.service'; // ← IMPORTAR CarritoService
 
 @Injectable({
   providedIn: 'root'
@@ -21,7 +24,10 @@ export class AuthService {
   private currentUserSubject: BehaviorSubject<Usuario | null>;
   public currentUser: Observable<Usuario | null>;
 
-  constructor(private http: HttpClient) {
+  constructor(
+    private http: HttpClient,
+    private carritoService: CarritoService // ← INYECTAR CarritoService
+  ) {
     const storedUser = this.getStoredUser();
     this.currentUserSubject = new BehaviorSubject<Usuario | null>(storedUser);
     this.currentUser = this.currentUserSubject.asObservable();
@@ -34,12 +40,14 @@ export class AuthService {
 
   /**
    * Login de usuario (cliente o administrador)
+   * ACTUALIZADO: Fusiona el carrito anónimo con el carrito del usuario
    */
   login(usuarioOCorreo: string, contrasenia: string): Observable<Usuario> {
     const loginRequest: LoginRequest = { usuarioOCorreo, contrasenia };
 
     return this.http.post<LoginResponse>(`${this.apiUrl}/login`, loginRequest)
       .pipe(
+        // Primero procesar la respuesta de login
         map(response => {
           const usuario: Usuario = {
             email: usuarioOCorreo,
@@ -53,6 +61,22 @@ export class AuthService {
           this.currentUserSubject.next(usuario);
           
           return usuario;
+        }),
+        // Luego fusionar el carrito
+        switchMap(usuario => {
+          console.log('🔄 Iniciando fusión de carrito después del login...');
+          
+          return this.carritoService.fusionarCarritoAlLogin().pipe(
+            map(() => {
+              console.log('✅ Login y fusión de carrito completados');
+              return usuario;
+            }),
+            catchError(error => {
+              console.warn('⚠️ Error al fusionar carrito, pero login exitoso:', error);
+              // Aunque falle la fusión, el login es exitoso
+              return [usuario];
+            })
+          );
         }),
         catchError(this.handleError)
       );
@@ -97,11 +121,17 @@ export class AuthService {
 
   /**
    * Cerrar sesión
+   * ACTUALIZADO: Limpia el carrito local al cerrar sesión
    */
   logout(): void {
     localStorage.removeItem('usuario');
     localStorage.removeItem('token');
     this.currentUserSubject.next(null);
+    
+    // Limpiar el carrito del usuario autenticado
+    this.carritoService.limpiarCarritoLocal();
+    
+    console.log('👋 Sesión cerrada y carrito limpiado');
   }
 
   /**
@@ -150,16 +180,13 @@ export class AuthService {
 
   /**
    * Manejo centralizado de errores HTTP
-   * ACTUALIZADO con mensajes más específicos según las validaciones del backend
    */
   private handleError(error: HttpErrorResponse) {
     let errorMessage = 'Ocurrió un error desconocido';
 
     if (error.error instanceof ErrorEvent) {
-      // Error del lado del cliente
       errorMessage = `Error: ${error.error.message}`;
     } else {
-      // Error del lado del servidor
       const serverError = error.error as ErrorResponse;
       
       switch (serverError?.code) {
@@ -193,8 +220,7 @@ export class AuthService {
           break;
           
         case 'INVALID_REQUEST':
-          // Este código se usa cuando fallan las validaciones del backend
-          errorMessage = 'Verifica que el formato de usuario o correo sea correcto. Los usuarios deben tener entre 7-50 caracteres y los correos deben tener un formato válido.';
+          errorMessage = 'Verifica que el formato de usuario o correo sea correcto.';
           break;
           
         case 'INTERNAL_ERROR':
@@ -202,7 +228,6 @@ export class AuthService {
           break;
           
         default:
-          // Si hay un mensaje específico del servidor, mostrarlo
           if (serverError?.code) {
             errorMessage = `Error: ${serverError.code}`;
           } else {

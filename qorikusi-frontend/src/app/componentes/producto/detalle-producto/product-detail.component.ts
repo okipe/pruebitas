@@ -1,3 +1,5 @@
+// src/app/componentes/producto/detalle-producto/product-detail.component.ts
+
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -24,6 +26,7 @@ export class ProductDetailComponent implements OnInit {
   // Estado del carrito
   cantidadEnCarrito = 1;
   maxCantidad = 10;
+  agregandoAlCarrito = false;
 
   constructor(
     private route: ActivatedRoute,
@@ -33,7 +36,6 @@ export class ProductDetailComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    // Obtener el UUID del producto de la ruta
     this.route.paramMap.subscribe(params => {
       const uuid = params.get('id');
       if (uuid) {
@@ -54,13 +56,8 @@ export class ProductDetailComponent implements OnInit {
     this.productoService.obtenerProductoPorId(uuid).subscribe({
       next: (producto) => {
         this.product = producto;
-        
-        // Configurar cantidad máxima según stock
         this.maxCantidad = Math.min(producto.stock, 10);
-        
-        // Cargar productos recomendados de la misma categoría
         this.cargarProductosRecomendados(producto.categoria, uuid);
-        
         this.loading = false;
       },
       error: (error) => {
@@ -77,7 +74,6 @@ export class ProductDetailComponent implements OnInit {
   cargarProductosRecomendados(categoria: string, excludeUuid: string) {
     this.productoService.obtenerProductos(categoria).subscribe({
       next: (productos) => {
-        // Filtrar el producto actual y tomar solo 4
         this.recommendedProducts = productos
           .filter(p => p.uuidProducto !== excludeUuid)
           .slice(0, 4);
@@ -114,7 +110,7 @@ export class ProductDetailComponent implements OnInit {
   }
 
   /**
-   * Añadir al carrito
+   * Añadir al carrito (ACTUALIZADO para usar backend)
    */
   addToCart() {
     if (!this.product) return;
@@ -124,11 +120,21 @@ export class ProductDetailComponent implements OnInit {
       return;
     }
 
-    this.carritoService.agregarProducto(this.product, this.cantidadEnCarrito);
-    alert(`${this.product.nombre} (x${this.cantidadEnCarrito}) agregado al carrito`);
-    
-    // Resetear cantidad
-    this.cantidadEnCarrito = 1;
+    this.agregandoAlCarrito = true;
+
+    this.carritoService.agregarProducto(this.product, this.cantidadEnCarrito)
+      .subscribe({
+        next: () => {
+          alert(`${this.product!.nombre} (x${this.cantidadEnCarrito}) agregado al carrito`);
+          this.cantidadEnCarrito = 1; // Resetear cantidad
+          this.agregandoAlCarrito = false;
+        },
+        error: (error) => {
+          console.error('Error al agregar al carrito:', error);
+          alert('Error al agregar el producto al carrito. Por favor intenta nuevamente.');
+          this.agregandoAlCarrito = false;
+        }
+      });
   }
 
   /**
@@ -142,8 +148,20 @@ export class ProductDetailComponent implements OnInit {
       return;
     }
 
-    this.carritoService.agregarProducto(this.product, this.cantidadEnCarrito);
-    this.router.navigate(['/checkout']);
+    this.agregandoAlCarrito = true;
+
+    this.carritoService.agregarProducto(this.product, this.cantidadEnCarrito)
+      .subscribe({
+        next: () => {
+          console.log('✅ Producto agregado, redirigiendo al checkout...');
+          this.router.navigate(['/checkout']);
+        },
+        error: (error) => {
+          console.error('Error al agregar al carrito:', error);
+          alert('Error al agregar el producto. Por favor intenta nuevamente.');
+          this.agregandoAlCarrito = false;
+        }
+      });
   }
 
   /**
@@ -170,12 +188,10 @@ export class ProductDetailComponent implements OnInit {
     
     const imagenes = [];
     
-    // Agregar imagen principal
     if (this.product.imagen) {
       imagenes.push(this.product.imagen);
     }
     
-    // Agregar imágenes adicionales si existen
     if (this.product.imagenes && this.product.imagenes.length > 0) {
       imagenes.push(...this.product.imagenes);
     }
