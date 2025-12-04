@@ -1,7 +1,11 @@
 // src/app/servicio/carrito.service.ts
 
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders, HttpErrorResponse } from '@angular/common/http';
+import {
+  HttpClient,
+  HttpHeaders,
+  HttpErrorResponse,
+} from '@angular/common/http';
 import { BehaviorSubject, Observable, throwError, of } from 'rxjs';
 import { map, catchError, tap, switchMap } from 'rxjs/operators';
 import { environment } from '../../environments/environment.development';
@@ -11,20 +15,19 @@ import {
   DetalleCarritoResponse,
   AgregarProductoRequest,
   ActualizarProductoRequest,
-  ItemCarritoCompleto
+  ItemCarritoCompleto,
 } from '../modelos/carrito-models';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class CarritoService {
-
   private apiUrl = `${environment.apiCartUrl}/cart`;
-  
+
   // BehaviorSubject para emitir cambios en el carrito
   private itemsSubject = new BehaviorSubject<ItemCarritoCompleto[]>([]);
   public items$ = this.itemsSubject.asObservable();
-  
+
   // UUID del carrito actual (anónimo o autenticado)
   private uuidCarrito: string | null = null;
 
@@ -38,14 +41,16 @@ export class CarritoService {
   private inicializarCarrito(): void {
     // Intentar obtener UUID del carrito desde localStorage
     const carritoGuardado = localStorage.getItem('uuidCarrito');
-    
+
     if (carritoGuardado) {
       this.uuidCarrito = carritoGuardado;
       console.log('📦 Carrito existente encontrado:', this.uuidCarrito);
       // Cargar carrito desde el backend
       this.cargarCarritoDesdeBackend();
     } else {
-      console.log('🆕 No hay carrito guardado, se creará uno nuevo al agregar el primer producto');
+      console.log(
+        '🆕 No hay carrito guardado, se creará uno nuevo al agregar el primer producto'
+      );
     }
   }
 
@@ -59,12 +64,12 @@ export class CarritoService {
 
     // Crear nuevo carrito en el backend
     return this.http.post<CarritoResponse>(this.apiUrl, {}).pipe(
-      tap(response => {
+      tap((response) => {
         this.uuidCarrito = response.uuidCarrito;
         localStorage.setItem('uuidCarrito', this.uuidCarrito);
         console.log('✅ Nuevo carrito creado:', this.uuidCarrito);
       }),
-      map(response => response.uuidCarrito),
+      map((response) => response.uuidCarrito),
       catchError(this.handleError)
     );
   }
@@ -78,10 +83,11 @@ export class CarritoService {
       return;
     }
 
-    this.http.get<CarritoResponse>(`${this.apiUrl}/${this.uuidCarrito}`)
+    this.http
+      .get<CarritoResponse>(`${this.apiUrl}/${this.uuidCarrito}`)
       .pipe(
-        map(response => this.convertirDetallesAItems(response.detalles)),
-        catchError(error => {
+        map((response) => this.convertirDetallesAItems(response.detalles)),
+        catchError((error) => {
           console.error('❌ Error al cargar carrito:', error);
           // Si el carrito no existe, limpiar localStorage
           if (error.status === 404) {
@@ -90,7 +96,7 @@ export class CarritoService {
           return of([]);
         })
       )
-      .subscribe(items => {
+      .subscribe((items) => {
         this.itemsSubject.next(items);
       });
   }
@@ -101,11 +107,11 @@ export class CarritoService {
   agregarProducto(producto: Producto, cantidad: number = 1): Observable<void> {
     const request: AgregarProductoRequest = {
       uuidProducto: producto.uuidProducto,
-      cantidad: cantidad
+      cantidad: cantidad,
     };
 
     return this.obtenerOCrearCarrito().pipe(
-      switchMap(uuidCarrito => 
+      switchMap((uuidCarrito) =>
         this.http.post<void>(`${this.apiUrl}/${uuidCarrito}/items`, request)
       ),
       tap(() => {
@@ -120,25 +126,30 @@ export class CarritoService {
   /**
    * Actualizar cantidad de un producto en el carrito
    */
-  actualizarCantidad(uuidProducto: string, nuevaCantidad: number): Observable<void> {
+  actualizarCantidad(
+    uuidProducto: string,
+    nuevaCantidad: number
+  ): Observable<void> {
     if (!this.uuidCarrito) {
       return throwError(() => new Error('No hay carrito activo'));
     }
 
     const request: ActualizarProductoRequest = {
-      cantidad: nuevaCantidad
+      cantidad: nuevaCantidad,
     };
 
-    return this.http.put<void>(
-      `${this.apiUrl}/${this.uuidCarrito}/items/${uuidProducto}`,
-      request
-    ).pipe(
-      tap(() => {
-        console.log(`✅ Cantidad actualizada para producto: ${uuidProducto}`);
-        this.cargarCarritoDesdeBackend();
-      }),
-      catchError(this.handleError)
-    );
+    return this.http
+      .put<void>(
+        `${this.apiUrl}/${this.uuidCarrito}/items/${uuidProducto}`,
+        request
+      )
+      .pipe(
+        tap(() => {
+          console.log(`✅ Cantidad actualizada para producto: ${uuidProducto}`);
+          this.cargarCarritoDesdeBackend();
+        }),
+        catchError(this.handleError)
+      );
   }
 
   /**
@@ -149,15 +160,15 @@ export class CarritoService {
       return throwError(() => new Error('No hay carrito activo'));
     }
 
-    return this.http.delete<void>(
-      `${this.apiUrl}/${this.uuidCarrito}/items/${uuidProducto}`
-    ).pipe(
-      tap(() => {
-        console.log(`✅ Producto eliminado: ${uuidProducto}`);
-        this.cargarCarritoDesdeBackend();
-      }),
-      catchError(this.handleError)
-    );
+    return this.http
+      .delete<void>(`${this.apiUrl}/${this.uuidCarrito}/items/${uuidProducto}`)
+      .pipe(
+        tap(() => {
+          console.log(`✅ Producto eliminado: ${uuidProducto}`);
+          this.cargarCarritoDesdeBackend();
+        }),
+        catchError(this.handleError)
+      );
   }
 
   /**
@@ -183,7 +194,7 @@ export class CarritoService {
    */
   fusionarCarritoAlLogin(): Observable<void> {
     const carritoAnonimo = localStorage.getItem('uuidCarrito');
-    
+
     if (!carritoAnonimo) {
       console.log('ℹ️ No hay carrito anónimo para fusionar');
       return of(void 0);
@@ -191,41 +202,41 @@ export class CarritoService {
 
     console.log('🔄 Iniciando fusión de carrito anónimo:', carritoAnonimo);
 
-    return this.http.post<void>(
-      `${this.apiUrl}/${carritoAnonimo}/merge`,
-      {}
-    ).pipe(
-      tap(() => {
-        console.log('✅ Carrito fusionado exitosamente');
-        // Limpiar el carrito anónimo y cargar el nuevo carrito del usuario
-        localStorage.removeItem('uuidCarrito');
-        this.uuidCarrito = null;
-        
-        // Obtener el nuevo carrito del usuario
-        this.obtenerCarritoAutenticado();
-      }),
-      catchError(error => {
-        console.error('❌ Error al fusionar carrito:', error);
-        // Aunque falle la fusión, limpiar el carrito anónimo
-        localStorage.removeItem('uuidCarrito');
-        this.uuidCarrito = null;
-        return of(void 0);
-      })
-    );
+    return this.http
+      .post<void>(`${this.apiUrl}/${carritoAnonimo}/merge`, {})
+      .pipe(
+        tap(() => {
+          console.log('✅ Carrito fusionado exitosamente');
+          // Limpiar el carrito anónimo y cargar el nuevo carrito del usuario
+          localStorage.removeItem('uuidCarrito');
+          this.uuidCarrito = null;
+
+          // Obtener el nuevo carrito del usuario
+          this.obtenerCarritoAutenticado();
+        }),
+        catchError((error) => {
+          console.error('❌ Error al fusionar carrito:', error);
+          // Aunque falle la fusión, limpiar el carrito anónimo
+          localStorage.removeItem('uuidCarrito');
+          this.uuidCarrito = null;
+          return of(void 0);
+        })
+      );
   }
 
   /**
    * Obtener el carrito del usuario autenticado
    */
   private obtenerCarritoAutenticado(): void {
-    this.http.post<CarritoResponse>(this.apiUrl, {})
+    this.http
+      .post<CarritoResponse>(this.apiUrl, {})
       .pipe(
-        catchError(error => {
+        catchError((error) => {
           console.error('❌ Error al obtener carrito autenticado:', error);
           return of(null);
         })
       )
-      .subscribe(response => {
+      .subscribe((response) => {
         if (response) {
           this.uuidCarrito = response.uuidCarrito;
           localStorage.setItem('uuidCarrito', this.uuidCarrito);
@@ -258,21 +269,29 @@ export class CarritoService {
    * Obtener cantidad total de items en el carrito
    */
   obtenerCantidadTotal(): number {
-    return this.itemsSubject.value.reduce((total, item) => total + item.cantidad, 0);
+    return this.itemsSubject.value.reduce(
+      (total, item) => total + item.cantidad,
+      0
+    );
   }
 
   /**
    * Obtener subtotal del carrito
    */
   obtenerSubtotal(): number {
-    return this.itemsSubject.value.reduce((total, item) => total + item.subtotal, 0);
+    return this.itemsSubject.value.reduce(
+      (total, item) => total + item.subtotal,
+      0
+    );
   }
 
   /**
    * Verificar si un producto está en el carrito
    */
   estaEnCarrito(uuidProducto: string): boolean {
-    return this.itemsSubject.value.some(item => item.producto.uuidProducto === uuidProducto);
+    return this.itemsSubject.value.some(
+      (item) => item.producto.uuidProducto === uuidProducto
+    );
   }
 
   /**
@@ -280,7 +299,7 @@ export class CarritoService {
    */
   obtenerCantidadProducto(uuidProducto: string): number {
     const item = this.itemsSubject.value.find(
-      item => item.producto.uuidProducto === uuidProducto
+      (item) => item.producto.uuidProducto === uuidProducto
     );
     return item ? item.cantidad : 0;
   }
@@ -297,8 +316,10 @@ export class CarritoService {
   /**
    * Convertir detalles del backend a items del frontend
    */
-  private convertirDetallesAItems(detalles: DetalleCarritoResponse[]): ItemCarritoCompleto[] {
-    return detalles.map(detalle => ({
+  private convertirDetallesAItems(
+    detalles: DetalleCarritoResponse[]
+  ): ItemCarritoCompleto[] {
+    return detalles.map((detalle) => ({
       producto: {
         uuidProducto: detalle.uuidProducto,
         categoria: detalle.categoria,
@@ -306,10 +327,10 @@ export class CarritoService {
         descripcion: '',
         precio: detalle.precio,
         stock: 999, // No lo tenemos del detalle, asumir stock suficiente
-        imagen: ''
+        imagen: detalle.imagen || '/images/placeholder-product.jpg',
       },
       cantidad: detalle.cantidad,
-      subtotal: detalle.subtotal
+      subtotal: detalle.subtotal,
     }));
   }
 
@@ -323,28 +344,28 @@ export class CarritoService {
       errorMessage = `Error: ${error.error.message}`;
     } else {
       const serverError = error.error;
-      
+
       switch (serverError?.code) {
         case 'CART_NOT_FOUND':
           errorMessage = 'Carrito no encontrado';
           break;
-        
+
         case 'PRODUCT_NOT_FOUND':
           errorMessage = 'Producto no encontrado';
           break;
-        
+
         case 'INSUFFICIENT_STOCK':
           errorMessage = 'Stock insuficiente para el producto';
           break;
-        
+
         case 'UNAUTHORIZED_CART_ACCESS':
           errorMessage = 'No tienes permiso para acceder a este carrito';
           break;
-        
+
         case 'INVALID_TOKEN':
           errorMessage = 'Sesión expirada. Por favor inicia sesión nuevamente';
           break;
-        
+
         default:
           if (serverError?.code) {
             errorMessage = `Error: ${serverError.code}`;

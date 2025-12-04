@@ -21,6 +21,7 @@ export interface DetalleCarritoResponse {
   precio: number;
   cantidad: number;
   subtotal: number;
+  imagen: string;// Agregado para imagen de producto en el cart
 }
 
 /**
