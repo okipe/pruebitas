@@ -76,11 +76,11 @@
           >
             <div class="product-image">
               <img
-                [src]="producto.imagen || 'images/placeholder-product.jpg'"
+                [src]="producto.imagen || '/images/placeholder-product.jpg'"
                 [alt]="producto.nombre"
                 class="img-fluid"
                 (error)="
-                  $any($event.target).src = 'images/placeholder-product.jpg'
+                  $any($event.target).src = '/images/placeholder-product.jpg'
                 "
               />
               <div class="product-overlay">
@@ -143,10 +143,10 @@
         <div class="col-lg-6 mb-4">
           <div class="about-image">
             <img
-              src="images/about-qorikusi.jpg"
+              src="/images/about-qorikusi.jpg"
               alt="Sobre Qorikusi"
               class="img-fluid rounded"
-              (error)="$any($event.target).src = 'images/placeholder-about.jpg'"
+              (error)="$any($event.target).src = '/images/placeholder-about.jpg'"
             />
           </div>
         </div>

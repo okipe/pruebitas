@@ -19,4 +19,5 @@ public class DetalleCarritoResponse {
     private BigDecimal precio;
     private Integer cantidad;
     private BigDecimal subtotal;
+    private String imagen; // Agregado para imagen de producto en el cart
 }

@@ -75,6 +75,7 @@ public class CarritoServiceImpl implements CarritoService {
                     .precio(producto.getPrecio())
                     .cantidad(detalle.getCantidad())
                     .subtotal(producto.getPrecio().multiply(BigDecimal.valueOf(detalle.getCantidad())))
+                    .imagen(producto.getImagen())  // Agregado para imagen de producto en el cart
                     .build();
         }).toList();
 

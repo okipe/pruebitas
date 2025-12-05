@@ -14,4 +14,5 @@ public class ProductoResponse {
     private BigDecimal precio;
     private Integer stock;
     private String energiaLunar;
+    private String imagen; // Agregado para imagen de producto en el cart
 }
