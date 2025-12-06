@@ -1,3 +1,6 @@
+// ARCHIVO COMPLETO: src/app/componentes/checkout/checkout.component.scss
+// Puedes reemplazar completamente tu archivo existente con este
+
 .checkout-page {
   background-color: #f5f3f0;
   min-height: 100vh;
@@ -154,6 +157,43 @@
 }
 
 /* ========================================
+   COMPROBANTE OPTIONS
+   ======================================== */
+
+.comprobante-options {
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  padding: 20px;
+  
+  .form-check {
+    padding: 15px;
+    margin-bottom: 10px;
+    border: 2px solid #e0e0e0;
+    border-radius: 6px;
+    transition: all 0.3s ease;
+    
+    &:hover {
+      background-color: #fff;
+      border-color: #d4af37;
+    }
+    
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+  
+  .form-check-input:checked + .form-check-label {
+    color: #3d3d5c;
+    font-weight: 600;
+  }
+  
+  .form-check:has(.form-check-input:checked) {
+    border-color: #3d3d5c;
+    background-color: rgba(61, 61, 92, 0.05);
+  }
+}
+
+/* ========================================
    PAYMENT METHODS SELECTION
    ======================================== */
 
@@ -229,10 +269,16 @@
 .confirmation-success {
   padding: 60px 20px;
   
+  .fa-check-circle {
+    animation: scaleIn 0.5s ease-out;
+  }
+  
   h3 {
-    font-size: 1.8rem;
+    font-size: 2rem;
     color: #2d2d2d;
     margin-bottom: 15px;
+    font-weight: 300;
+    letter-spacing: 1px;
   }
   
   p {
@@ -241,7 +287,22 @@
     
     strong {
       color: #3d3d5c;
+      font-weight: 600;
     }
+  }
+}
+
+@keyframes scaleIn {
+  0% {
+    transform: scale(0);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
   }
 }
 
@@ -249,6 +310,47 @@
   display: flex;
   justify-content: center;
   gap: 15px;
+}
+
+/* ========================================
+   COMPROBANTE DETAILS (Confirmation)
+   ======================================== */
+
+.comprobante-details {
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  padding: 25px;
+  margin-top: 30px;
+  
+  h5 {
+    font-size: 1.2rem;
+    color: #2d2d2d;
+    margin-bottom: 20px;
+    font-weight: 500;
+  }
+}
+
+.comprobante-info {
+  text-align: left;
+  max-width: 400px;
+  margin: 0 auto;
+  
+  p {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 0;
+    border-bottom: 1px solid #e0e0e0;
+    margin-bottom: 0;
+    
+    &:last-child {
+      border-bottom: none;
+    }
+    
+    strong {
+      color: #5a5a5a;
+      font-weight: 500;
+    }
+  }
 }
 
 /* ========================================
@@ -422,6 +524,55 @@
 }
 
 /* ========================================
+   LOADING STATE
+   ======================================== */
+
+.spinner-border {
+  width: 3rem;
+  height: 3rem;
+  border-width: 0.3rem;
+}
+
+/* ========================================
+   ALERT IMPROVEMENTS
+   ======================================== */
+
+.alert {
+  border-radius: 8px;
+  padding: 15px 20px;
+  
+  i {
+    font-size: 1.1rem;
+  }
+}
+
+.alert-danger {
+  background-color: #fff5f5;
+  border-color: #f5c6cb;
+  color: #721c24;
+}
+
+.alert-info {
+  background-color: #e7f3ff;
+  border-color: #b3d7ff;
+  color: #004085;
+}
+
+/* ========================================
+   CARD NUMBER & EXPIRY FORMATTING
+   ======================================== */
+
+#cardNumber {
+  letter-spacing: 2px;
+  font-family: 'Courier New', monospace;
+}
+
+#expiryDate,
+#cvv {
+  font-family: 'Courier New', monospace;
+}
+
+/* ========================================
    BUTTONS
    ======================================== */
 
@@ -510,5 +661,29 @@
   
   .payment-methods-selection {
     grid-template-columns: 1fr;
+  }
+  
+  .comprobante-options {
+    padding: 15px;
+    
+    .form-check {
+      padding: 12px;
+    }
+  }
+  
+  .confirmation-success {
+    padding: 40px 15px;
+    
+    h3 {
+      font-size: 1.5rem;
+    }
+    
+    .fa-check-circle {
+      font-size: 3rem !important;
+    }
+  }
+  
+  .comprobante-details {
+    padding: 20px 15px;
   }
 }

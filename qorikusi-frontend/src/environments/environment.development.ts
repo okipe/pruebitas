@@ -5,9 +5,11 @@ export const environment = {
   
   // URLs de los microservicios del backend
   apiUrl: 'http://localhost:8080/auth',              // Servicio de autenticación
+  apiCustomerUrl: 'http://localhost:8081',           // Servicio de cliente
   apiProductsUrl: 'http://localhost:8082',           // Servicio de productos
   apiCartUrl: 'http://localhost:8083',               // Servicio de carrito
-  apiCustomerUrl: 'http://localhost:8081',           // Servicio de cliente (si existe)
+  apiOrdersUrl: 'http://localhost:8084',             // Servicio de pedidos (NUEVO)
+  apiPaymentsUrl: 'http://localhost:8085',           // Servicio de pagos (NUEVO)
   
   // Configuración adicional
   defaultPageSize: 12,

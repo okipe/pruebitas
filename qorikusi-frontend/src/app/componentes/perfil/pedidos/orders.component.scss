@@ -1,0 +1,372 @@
+/* src/app/componentes/perfil/pedidos/orders.component.scss */
+
+.orders-page {
+  background-color: #f5f3f0;
+  min-height: 100vh;
+}
+
+/* ========================================
+   PAGE TITLE
+   ======================================== */
+
+.page-title {
+  font-size: 2rem;
+  font-weight: 300;
+  letter-spacing: 2px;
+  color: #2d2d2d;
+  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+
+  i {
+    color: #3d3d5c;
+  }
+}
+
+/* ========================================
+   EMPTY STATE
+   ======================================== */
+
+.empty-state {
+  i {
+    color: #d0d0d0;
+  }
+
+  h3 {
+    font-size: 1.8rem;
+    color: #2d2d2d;
+    margin-bottom: 15px;
+    font-weight: 300;
+  }
+
+  p {
+    font-size: 1.1rem;
+    color: #5a5a5a;
+  }
+}
+
+/* ========================================
+   ORDERS LIST
+   ======================================== */
+
+.orders-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* ========================================
+   ORDER CARD
+   ======================================== */
+
+.order-card {
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  overflow: hidden;
+  transition: all 0.3s ease;
+
+  &:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    transform: translateY(-2px);
+  }
+}
+
+/* ========================================
+   ORDER HEADER
+   ======================================== */
+
+.order-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 25px;
+  background-color: #f9f9f9;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.order-info {
+  .order-number {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #2d2d2d;
+    margin-bottom: 5px;
+    display: flex;
+    align-items: center;
+
+    i {
+      color: #3d3d5c;
+    }
+  }
+
+  .order-date {
+    font-size: 0.9rem;
+    color: #777;
+    margin: 0;
+    display: flex;
+    align-items: center;
+  }
+}
+
+.order-status {
+  .badge {
+    font-size: 0.9rem;
+    padding: 8px 15px;
+    border-radius: 20px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .badge-warning {
+    background-color: #fff3cd;
+    color: #856404;
+  }
+
+  .badge-success {
+    background-color: #d4edda;
+    color: #155724;
+  }
+
+  .badge-danger {
+    background-color: #f8d7da;
+    color: #721c24;
+  }
+
+  .badge-info {
+    background-color: #d1ecf1;
+    color: #0c5460;
+  }
+
+  .badge-secondary {
+    background-color: #e2e3e5;
+    color: #383d41;
+  }
+}
+
+/* ========================================
+   ORDER BODY
+   ======================================== */
+
+.order-body {
+  padding: 25px;
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 30px;
+}
+
+/* ========================================
+   PRODUCTS PREVIEW
+   ======================================== */
+
+.products-preview {
+  .product-item {
+    display: grid;
+    grid-template-columns: 2fr auto auto;
+    gap: 15px;
+    padding: 12px 0;
+    border-bottom: 1px solid #f0f0f0;
+    align-items: center;
+
+    &:last-child {
+      border-bottom: none;
+    }
+  }
+
+  .product-name {
+    font-size: 0.95rem;
+    color: #2d2d2d;
+    font-weight: 500;
+
+    i {
+      color: #d4af37;
+    }
+  }
+
+  .product-quantity {
+    font-size: 0.9rem;
+    color: #777;
+    text-align: center;
+  }
+
+  .product-price {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #3d3d5c;
+    text-align: right;
+  }
+
+  .more-products {
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid #e0e0e0;
+    font-size: 0.9rem;
+    color: #777;
+    font-style: italic;
+  }
+}
+
+/* ========================================
+   ORDER SUMMARY
+   ======================================== */
+
+.order-summary {
+  background-color: #f9f9f9;
+  border-radius: 6px;
+  padding: 20px;
+
+  .summary-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid #e0e0e0;
+
+    &:last-child {
+      border-bottom: none;
+    }
+
+    &.total {
+      margin-top: 10px;
+      padding-top: 15px;
+      border-top: 2px solid #d0d0d0;
+
+      .summary-label,
+      .summary-value {
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: #3d3d5c;
+      }
+    }
+  }
+
+  .summary-label {
+    font-size: 0.9rem;
+    color: #5a5a5a;
+    display: flex;
+    align-items: center;
+
+    i {
+      color: #3d3d5c;
+    }
+  }
+
+  .summary-value {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #2d2d2d;
+  }
+}
+
+/* ========================================
+   ORDER FOOTER
+   ======================================== */
+
+.order-footer {
+  display: flex;
+  gap: 15px;
+  padding: 15px 25px;
+  background-color: #f9f9f9;
+  border-top: 1px solid #e0e0e0;
+}
+
+/* ========================================
+   BUTTONS
+   ======================================== */
+
+.btn-primary-custom {
+  background-color: #3d3d5c;
+  color: #ffffff;
+  border: none;
+  padding: 12px 30px;
+  border-radius: 6px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  transition: all 0.3s ease;
+
+  &:hover {
+    background-color: #d4af37;
+    color: #3d3d5c;
+    transform: translateY(-2px);
+  }
+}
+
+.btn-outline-custom {
+  background-color: transparent;
+  color: #3d3d5c;
+  border: 2px solid #3d3d5c;
+  padding: 8px 20px;
+  border-radius: 6px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+
+  &:hover {
+    background-color: #3d3d5c;
+    color: #ffffff;
+  }
+}
+
+/* ========================================
+   RESPONSIVE
+   ======================================== */
+
+@media (max-width: 992px) {
+  .order-body {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  .order-summary {
+    order: -1; // Mostrar primero en móvil
+  }
+}
+
+@media (max-width: 768px) {
+  .page-title {
+    font-size: 1.5rem;
+
+    i {
+      font-size: 1.3rem;
+    }
+  }
+
+  .order-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 15px;
+  }
+
+  .order-status {
+    width: 100%;
+
+    .badge {
+      width: 100%;
+      justify-content: center;
+    }
+  }
+
+  .order-body {
+    padding: 20px;
+  }
+
+  .products-preview {
+    .product-item {
+      grid-template-columns: 1fr;
+      gap: 8px;
+    }
+
+    .product-quantity,
+    .product-price {
+      text-align: left;
+    }
+  }
+
+  .order-footer {
+    flex-direction: column;
+
+    .btn {
+      width: 100%;
+    }
+  }
+}

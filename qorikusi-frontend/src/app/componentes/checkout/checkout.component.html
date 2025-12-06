@@ -1,3 +1,5 @@
+<!-- src/app/componentes/checkout/checkout.component.html -->
+
 <div class="checkout-page">
   
   <!-- Banner de Envío -->
@@ -27,17 +29,84 @@
       </div>
     </div>
 
-    <div class="row">
+    <!-- Error Message -->
+    <div class="alert alert-danger" *ngIf="error" role="alert">
+      <i class="fas fa-exclamation-triangle me-2"></i>
+      {{ error }}
+    </div>
+
+    <!-- Loading Spinner -->
+    <div class="text-center my-5" *ngIf="loading">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Procesando...</span>
+      </div>
+      <p class="mt-3">Procesando tu pedido, por favor espera...</p>
+    </div>
+
+    <div class="row" *ngIf="!loading">
       
       <!-- Formularios -->
       <div class="col-lg-7 mb-4">
         
         <!-- Paso 1: Información de Envío -->
         <div class="checkout-section" *ngIf="currentStep === 1">
-          <h3 class="section-title">Información de Envío</h3>
+          <h3 class="section-title">Información de Envío y Facturación</h3>
           
           <form [formGroup]="shippingForm">
             
+            <!-- Tipo de Comprobante -->
+            <div class="mb-4">
+              <label class="form-label">Tipo de Comprobante *</label>
+              <div class="comprobante-options">
+                <div class="form-check">
+                  <input 
+                    class="form-check-input" 
+                    type="radio" 
+                    name="tipoComprobante" 
+                    id="boleta"
+                    [value]="TipoComprobante.BOLETA"
+                    formControlName="tipoComprobante"
+                    (change)="onTipoComprobanteChange($event)"
+                  >
+                  <label class="form-check-label" for="boleta">
+                    <strong>Boleta</strong> - Para personas naturales (DNI)
+                  </label>
+                </div>
+                <div class="form-check">
+                  <input 
+                    class="form-check-input" 
+                    type="radio" 
+                    name="tipoComprobante" 
+                    id="factura"
+                    [value]="TipoComprobante.FACTURA"
+                    formControlName="tipoComprobante"
+                    (change)="onTipoComprobanteChange($event)"
+                  >
+                  <label class="form-check-label" for="factura">
+                    <strong>Factura</strong> - Para empresas (RUC)
+                  </label>
+                </div>
+              </div>
+            </div>
+
+            <!-- Documento -->
+            <div class="mb-3">
+              <label for="documento" class="form-label">
+                {{ shippingForm.get('tipoComprobante')?.value === TipoComprobante.FACTURA ? 'RUC' : 'DNI' }} *
+              </label>
+              <input 
+                type="text" 
+                class="form-control" 
+                id="documento"
+                formControlName="documento"
+                [placeholder]="shippingForm.get('tipoComprobante')?.value === TipoComprobante.FACTURA ? '20123456789' : '12345678'"
+                [class.is-invalid]="shippingForm.get('documento')?.invalid && shippingForm.get('documento')?.touched"
+              >
+              <div class="invalid-feedback" *ngIf="shippingForm.get('documento')?.invalid && shippingForm.get('documento')?.touched">
+                Por favor ingresa un {{ shippingForm.get('tipoComprobante')?.value === TipoComprobante.FACTURA ? 'RUC válido (11 dígitos)' : 'DNI válido (8 dígitos)' }}
+              </div>
+            </div>
+
             <div class="row">
               <div class="col-md-6 mb-3">
                 <label for="firstName" class="form-label">Nombres *</label>
@@ -92,11 +161,12 @@
                 class="form-control" 
                 id="phone"
                 formControlName="phone"
-                placeholder="999 999 999"
+                placeholder="999999999"
+                maxlength="9"
                 [class.is-invalid]="shippingForm.get('phone')?.invalid && shippingForm.get('phone')?.touched"
               >
               <div class="invalid-feedback" *ngIf="shippingForm.get('phone')?.invalid && shippingForm.get('phone')?.touched">
-                Por favor ingresa tu teléfono
+                Por favor ingresa un teléfono válido (9 dígitos)
               </div>
             </div>
 
@@ -111,7 +181,7 @@
                 [class.is-invalid]="shippingForm.get('address')?.invalid && shippingForm.get('address')?.touched"
               >
               <div class="invalid-feedback" *ngIf="shippingForm.get('address')?.invalid && shippingForm.get('address')?.touched">
-                Por favor ingresa tu dirección
+                Por favor ingresa tu dirección completa
               </div>
             </div>
 
@@ -130,6 +200,10 @@
                   <option value="Cusco">Cusco</option>
                   <option value="Trujillo">Trujillo</option>
                   <option value="Chiclayo">Chiclayo</option>
+                  <option value="Piura">Piura</option>
+                  <option value="Iquitos">Iquitos</option>
+                  <option value="Huancayo">Huancayo</option>
+                  <option value="Tacna">Tacna</option>
                 </select>
                 <div class="invalid-feedback" *ngIf="shippingForm.get('city')?.invalid && shippingForm.get('city')?.touched">
                   Por favor selecciona una ciudad
@@ -232,6 +306,7 @@
                 formControlName="cardNumber"
                 placeholder="1234 5678 9012 3456"
                 maxlength="19"
+                (input)="formatCardNumber($event)"
                 [class.is-invalid]="paymentForm.get('cardNumber')?.invalid && paymentForm.get('cardNumber')?.touched"
               >
               <div class="invalid-feedback" *ngIf="paymentForm.get('cardNumber')?.invalid && paymentForm.get('cardNumber')?.touched">
@@ -249,10 +324,11 @@
                   formControlName="expiryDate"
                   placeholder="MM/AA"
                   maxlength="5"
+                  (input)="formatExpiryDate($event)"
                   [class.is-invalid]="paymentForm.get('expiryDate')?.invalid && paymentForm.get('expiryDate')?.touched"
                 >
                 <div class="invalid-feedback" *ngIf="paymentForm.get('expiryDate')?.invalid && paymentForm.get('expiryDate')?.touched">
-                  Ingresa una fecha válida
+                  Ingresa una fecha válida (MM/AA)
                 </div>
               </div>
 
@@ -268,7 +344,7 @@
                   [class.is-invalid]="paymentForm.get('cvv')?.invalid && paymentForm.get('cvv')?.touched"
                 >
                 <div class="invalid-feedback" *ngIf="paymentForm.get('cvv')?.invalid && paymentForm.get('cvv')?.touched">
-                  Ingresa el CVV
+                  Ingresa el CVV (3-4 dígitos)
                 </div>
               </div>
             </div>
@@ -279,8 +355,8 @@
           <div class="payment-info" *ngIf="selectedPaymentMethod === 'yape'">
             <div class="alert alert-info">
               <i class="fas fa-info-circle me-2"></i>
-              <strong>Instrucciones:</strong> Realiza la transferencia al número <strong>999 999 999</strong> a nombre de Qorikusi. 
-              Luego, sube tu comprobante de pago en la siguiente pantalla.
+              <strong>Instrucciones:</strong> El pago será procesado automáticamente. 
+              Recibirás un correo con la confirmación de tu pedido.
             </div>
           </div>
 
@@ -288,10 +364,8 @@
           <div class="payment-info" *ngIf="selectedPaymentMethod === 'transfer'">
             <div class="alert alert-info">
               <i class="fas fa-info-circle me-2"></i>
-              <strong>Datos Bancarios:</strong><br>
-              Banco BCP - Cuenta Corriente: 123-456789-0-12<br>
-              A nombre de: Qorikusi SAC<br>
-              Envía tu comprobante de pago por email a: ventas&#64;qorikusi.com
+              <strong>Instrucciones:</strong> El pago será procesado automáticamente. 
+              Recibirás un correo con los detalles de tu pedido.
             </div>
           </div>
 
@@ -309,7 +383,8 @@
               [disabled]="selectedPaymentMethod === 'card' && paymentForm.invalid"
               (click)="nextStep()"
             >
-              CONTINUAR A CONFIRMACIÓN
+              <i class="fas fa-lock me-2"></i>
+              PROCESAR PAGO
             </button>
           </div>
         </div>
@@ -319,8 +394,19 @@
           <div class="confirmation-success text-center">
             <i class="fas fa-check-circle fa-4x text-success mb-3"></i>
             <h3>¡Pedido Confirmado!</h3>
-            <p>Tu número de orden es: <strong>#QRK-{{ orderNumber }}</strong></p>
+            <p>Tu número de orden es: <strong>{{ getOrderNumber() }}</strong></p>
             <p>Recibirás un correo de confirmación en breve.</p>
+            
+            <!-- Detalles del Comprobante -->
+            <div class="comprobante-details mt-4" *ngIf="comprobanteGenerado">
+              <h5>Comprobante de Pago</h5>
+              <div class="comprobante-info">
+                <p><strong>Serie:</strong> {{ comprobanteGenerado.serie }}</p>
+                <p><strong>Número:</strong> {{ comprobanteGenerado.numero }}</p>
+                <p><strong>Monto Total:</strong> S/. {{ comprobanteGenerado.montoTotal | number:'1.2-2' }}</p>
+                <p><strong>Número de Operación:</strong> {{ comprobanteGenerado.pago.numeroOperacion }}</p>
+              </div>
+            </div>
             
             <div class="confirmation-actions mt-4">
               <button class="btn btn-primary-custom me-3" routerLink="/">
@@ -345,15 +431,20 @@
           <div class="summary-products">
             <div class="summary-product" *ngFor="let item of orderItems">
               <div class="product-image">
-                <img [src]="item.producto.imagen" [alt]="item.producto.nombre" class="img-fluid">
+                <img 
+                  [src]="item.producto.imagen || '/images/placeholder-product.jpg'" 
+                  [alt]="item.producto.nombre" 
+                  class="img-fluid"
+                  (error)="$any($event.target).src='/images/placeholder-product.jpg'"
+                >
                 <span class="quantity-badge">{{ item.cantidad }}</span>
               </div>
               <div class="product-info">
                 <h6>{{ item.producto.nombre }}</h6>
-                <p>s/. {{ item.producto.precio | number:'1.2-2' }}</p>
+                <p>S/. {{ item.producto.precio | number:'1.2-2' }}</p>
               </div>
               <div class="product-total">
-                <p>s/. {{ item.producto.precio * item.cantidad | number:'1.2-2' }}</p>
+                <p>S/. {{ item.subtotal | number:'1.2-2' }}</p>
               </div>
             </div>
           </div>
@@ -362,17 +453,17 @@
           <div class="summary-totals">
             <div class="total-row">
               <span>Subtotal</span>
-              <span>s/. {{ getSubtotal() | number:'1.2-2' }}</span>
+              <span>S/. {{ getSubtotal() | number:'1.2-2' }}</span>
             </div>
             <div class="total-row">
               <span>Envío</span>
               <span *ngIf="getSubtotal() >= 250" class="text-success">GRATIS</span>
-              <span *ngIf="getSubtotal() < 250">s/. {{ shippingCost | number:'1.2-2' }}</span>
+              <span *ngIf="getSubtotal() < 250">S/. {{ shippingCost | number:'1.2-2' }}</span>
             </div>
             <div class="total-divider"></div>
             <div class="total-row total-final">
               <span>Total</span>
-              <span>s/. {{ getTotal() | number:'1.2-2' }}</span>
+              <span>S/. {{ getTotal() | number:'1.2-2' }}</span>
             </div>
           </div>
 
